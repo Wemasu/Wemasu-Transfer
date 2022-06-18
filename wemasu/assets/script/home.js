@@ -1,7 +1,12 @@
 "use strict";
 import * as cookie from "./cookie.js";
 
-window.onload = () => {
+window.onload = async () => {
+    const result = await fetch("./index.json")
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data);
+        });
     init();
 };
 
