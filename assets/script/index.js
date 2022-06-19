@@ -2,8 +2,7 @@
 import * as cookie from "./cookie.js";
 
 window.onload = () => {
-    console.log(`Stephan heeft een dikke penis`);
-    console.log("Penis");
+    console.log(`Stephan heeft een tiny penis`);
     init();
 };
 
