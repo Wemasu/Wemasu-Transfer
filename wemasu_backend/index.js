@@ -30,6 +30,17 @@ setInterval(() => {
     expiredFileChecker();
 }, 3600000); // 3600000 => 1hr
 
+// FUNCTION TO FIND AND DELETE EXPIRED FILES
+function expiredFileChecker() {
+    const filesArray = JSON.parse(fs.readFileSync(jsonPath)).filter((file) => {
+        if (new Date(file.expirationDate) < new Date()) {
+            fs.unlinkSync(file.uploadPath);
+            return false;
+        } else return true;
+    });
+    fs.writeFileSync(jsonPath, JSON.stringify(filesArray));
+}
+
 app.post("/login", async (req, res) => {
     try {
         // CHECK IF CREDENTIALS ARE MISSING
@@ -86,7 +97,7 @@ app.post("/upload", async (req, res) => {
             if (err) {
                 return res.status(500).send(err);
             }
-            res.status(200).send("File uploaded!");
+            res.redirect(req.get("referer") + "home.html");
         });
 
         // CATCH THROWN ERRORS
@@ -98,16 +109,32 @@ app.post("/upload", async (req, res) => {
     }
 });
 
-// FUNCTION TO FIND AND DELETE EXPIRED FILES
-function expiredFileChecker() {
-    const filesArray = JSON.parse(fs.readFileSync(jsonPath)).filter((file) => {
-        if (new Date(file.expirationDate) < new Date()) {
-            fs.unlinkSync(file.uploadPath);
-            return false;
-        } else return true;
-    });
-    fs.writeFileSync(jsonPath, JSON.stringify(filesArray));
-}
+app.get("/download", async (req, res) => {
+    try {
+        const files = JSON.parse(fs.readFileSync(jsonPath));
+
+        // FIND SPECIFIC FILE
+        let file = files.filter((file) => {
+            const fileName = file.uploadPath.substring(file.uploadPath.lastIndexOf("/") + 1);
+            return fileName === req.query.file;
+        });
+
+        if (file.length != 0) {
+            res.download(file[0].uploadPath, (err) => {
+                if (err) {
+                    throw new Error(err);
+                }
+            });
+        } else {
+            throw new Error("No file found.");
+        }
+    } catch (e) {
+        res.status(500).send({
+            error: e.message,
+            value: e.value,
+        });
+    }
+});
 
 // LISTEN TO PORT FOR FILE UPLOAD
 app.listen(port, () => {
