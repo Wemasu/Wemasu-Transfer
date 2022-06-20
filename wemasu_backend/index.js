@@ -1,16 +1,14 @@
 // MODULES
-// const File = require("./file.js");
+const File = require("./file.js");
 const express = require("express");
 const app = express();
 const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
-const { json } = require("express");
 require("dotenv").config();
 
 // GLOBAL VARIABLES
-const tempArray = [];
 const jsonPath = __dirname + "/files.json";
 const port = process.env.PORT;
 
@@ -34,6 +32,7 @@ setInterval(() => {
 
 app.post("/upload", async (req, res) => {
   try {
+    console.log("Uploading file");
     // CHECK IF EMPTY
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send("No files were uploaded.");
@@ -55,14 +54,7 @@ app.post("/upload", async (req, res) => {
       return res.status(400).send("File too large!");
 
     // WRITE FILE TO JSON
-    // const newFile = new File(new Date(), 24);
-    const uploadDate = new Date();
-    const hours = 24;
-    newFile = {
-      uploadPath,
-      uploadDate,
-      expirationDate: new Date(uploadDate.getTime() + hours * 60 * 60 * 1000),
-    };
+    const newFile = new File(new Date(), 24);
     filesArray.push(newFile);
     fs.writeFileSync(jsonPath, JSON.stringify(filesArray));
 
