@@ -2,7 +2,6 @@
 import * as cookie from "./cookie.js";
 
 window.onload = () => {
-    console.log(`Stephan heeft een tiny penis`);
     init();
 };
 
@@ -24,7 +23,6 @@ function validateInput() {
     const field_name = document.querySelector("#name").value;
     const field_password = document.querySelector("#password").value;
     const dom_error = document.querySelector("#login-error-text");
-    const div = document.getElementById("login-error");
 
     if (!field_name || !field_password) {
         let htmlInputsMissing = "";
@@ -37,16 +35,26 @@ function validateInput() {
         return;
     } else {
         dom_error.innerHTML = "";
-        // dom_error.style.display = "none";
     }
     return [field_name, field_password];
 }
 
-async function login(name, password) {
-    console.log(name, password);
-
-    setTimeout(function () {
-        cookie.setCookie("name", name);
-        window.location = "/home.html";
-    }, 1000);
+function login(name, password) {
+    fetch("http://localhost:1337/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: name.toLowerCase(), password }),
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.error) {
+                const dom_error = document.querySelector("#login-error-text");
+                dom_error.innerHTML = data.error;
+                return;
+            }
+            cookie.setCookie("name", data.name);
+            window.location = "/home.html";
+        });
 }
