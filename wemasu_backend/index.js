@@ -1,5 +1,5 @@
 // MODULES
-const File = require("./file.js");
+// const File = require("./file.js");
 const express = require("express");
 const app = express();
 const fs = require("fs");
@@ -19,6 +19,7 @@ app.use(cors());
 app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(fileUpload());
+
 app.get("/", (req, res) => {
   res.status(300).redirect("/docs.html");
 });
@@ -54,7 +55,14 @@ app.post("/upload", async (req, res) => {
       return res.status(400).send("File too large!");
 
     // WRITE FILE TO JSON
-    const newFile = new File(new Date(), 24);
+    // const newFile = new File(new Date(), 24);
+    const uploadDate = new Date();
+    const hours = 24;
+    newFile = {
+      uploadPath,
+      uploadDate,
+      expirationDate: new Date(uploadDate.getTime() + hours * 60 * 60 * 1000),
+    };
     filesArray.push(newFile);
     fs.writeFileSync(jsonPath, JSON.stringify(filesArray));
 
