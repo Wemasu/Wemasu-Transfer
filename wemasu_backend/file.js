@@ -23,3 +23,5 @@ class File {
         return this.#expirationDate;
     }
 }
+
+module.exports = File // export class
