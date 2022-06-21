@@ -43,7 +43,7 @@ function validateInput() {
 }
 
 function login(name, passwordHash) {
-  fetch("http://20.254.59.157:1337/login", {
+  fetch("http://localhost:1337/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

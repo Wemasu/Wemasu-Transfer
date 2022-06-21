@@ -69,7 +69,9 @@ app.post("/upload", async (req, res) => {
     // GET ALL USERS
     const users = JSON.parse(fs.readFileSync(databasePath));
     // GET USER THAT SENT REQUEST
-    const user = users.find((user) => user.name === req.body.author);
+    const user = users.find(
+      (user) => user.name.toLowerCase() === req.body.author.toLowerCase()
+    );
     // ASSIGN UPLOADEDFILE & UPLOADEDPATH
     const uploadedFile = req.files.file;
     const uploadPath = `${__dirname}/uploads/${user.name}/${uploadedFile.name}`;
@@ -93,7 +95,9 @@ app.post("/upload", async (req, res) => {
 
     // UPLOAD FILE TO DATABASE
     uploadedFile.mv(uploadPath, (err) =>
-      err ? res.status(500).send(err) : res.status(200).send("File uploaded!")
+      err
+        ? res.status(500).send(err)
+        : res.redirect(req.get("referer") + "home.html")
     );
 
     // CATCH THROWN ERRORS
