@@ -42,11 +42,7 @@ function init() {
   btn_upload.addEventListener("click", (e) => {
     storeLatestUploadedFileInCookie();
   });
-
-  // DISPLAY LINK TEXT
-  const p = document.createElement("p");
-  p.textContent = downloadUrl;
-  p.setAttribute("id", "download_url");
+  const user = cookie.getCookie("name");
 
   welcome.innerHTML = `Welcome ${user}`;
   hidden_input_author.value = user;
