@@ -65,6 +65,17 @@ app.post("/login", async (req, res) => {
     }
 });
 
+app.post("/uploads", async (req, res) => {
+    try {
+        console.log(req.body.file);
+    } catch (e) {
+        res.status(500).send({
+            error: e.message,
+            value: e.value,
+        });
+    }
+});
+
 app.post("/upload", async (req, res) => {
     try {
         // CHECK IF EMPTY
