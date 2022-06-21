@@ -43,7 +43,10 @@ function init() {
     storeLatestUploadedFileInCookie();
   });
 
-  const user = cookie.getCookie("name");
+  // DISPLAY LINK TEXT
+  const p = document.createElement("p");
+  p.textContent = downloadUrl;
+  p.setAttribute("id", "download_url");
 
   welcome.innerHTML = `Welcome ${user}`;
   hidden_input_author.value = user;
