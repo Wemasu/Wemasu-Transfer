@@ -1,5 +1,6 @@
 // MODULES
 const File = require("./file.js");
+const User = require("./user");
 const express = require("express");
 const app = express();
 const fs = require("fs");
@@ -9,7 +10,7 @@ const fileUpload = require("express-fileupload");
 require("dotenv").config();
 
 // GLOBAL VARIABLES
-const jsonPath = __dirname + "/files.json";
+const databasePath = __dirname + "/database.json";
 const port = process.env.PORT;
 
 // MIDDELWARE
@@ -19,7 +20,7 @@ app.use(bodyParser.json());
 app.use(fileUpload());
 
 app.get("/", (req, res) => {
-    res.status(300).redirect("/docs.html");
+  res.status(300).redirect("/docs.html");
 });
 
 // CHECK FOR EXPIRED FILES
@@ -27,127 +28,135 @@ expiredFileChecker();
 
 // ENABLE HOURLY CHECK
 setInterval(() => {
-    expiredFileChecker();
+  expiredFileChecker();
 }, 3600000); // 3600000 => 1hr
+
+// LOGIN
+app.post("/login", async (req, res) => {
+  try {
+    // CHECK IF CREDENTIALS ARE MISSING
+    if (!req.body.name || !req.body.passwordHash)
+      throw new Error("Missing credentials.");
+    // GET USERS AND TEMPUSER
+    const users = JSON.parse(fs.readFileSync(databasePath));
+    const tempUser = new User(req.body.name, req.body.passwordHash);
+    // CHECK NAME AND PASSWORD
+    const user = users.find(
+      (user) => user.name.toLowerCase() === tempUser.name.toLowerCase()
+    );
+    if (!user) {
+      throw new Error(`User ${tempUser.name} does not exist.`);
+    }
+    if (user.passwordHash !== tempUser.passwordHash) {
+      throw new Error(`Password is incorrect`);
+    }
+    // SEND SUCCES
+    res.status(200).send({ success: "Login successful.", name: tempUser.name });
+  } catch (e) {
+    res.status(500).send({
+      error: e.message,
+      value: e.value,
+    });
+  }
+});
+// UPLOAD
+app.post("/upload", async (req, res) => {
+  try {
+    // VALIDATION => CHECK IF EMPTY REQUEST => IF SO ABORT
+    if (!req.files || Object.keys(req.files).length === 0) {
+      throw new Error(`No upload file selected`);
+    }
+    // GET ALL USERS
+    const users = JSON.parse(fs.readFileSync(databasePath));
+    // GET USER THAT SENT REQUEST
+    const user = users.find((user) => user.name === req.body.author);
+    // ASSIGN UPLOADEDFILE & UPLOADEDPATH
+    const uploadedFile = req.files.file;
+    const uploadPath = `${__dirname}/uploads/${user.name}/${uploadedFile.name}`;
+    // CHECK IF FILE ALREADY EXISTS
+    user.files.forEach((file) => {
+      if (file.uploadPath === uploadPath) {
+        throw new Error("File already exists");
+      }
+    });
+    // CHECK IF FILE SIZE TO LARGE
+    const MAX_FILE_SIZE = Math.pow(10, 9); // 1,000,000,000 BYTES => 1000 MB => 1 GB
+    if (uploadedFile.size > MAX_FILE_SIZE)
+      throw new Error(`File is too large. Max file size is ${MAX_FILE_SIZE}`);
+
+    // WRITE NEW FILE TO USER IN JSON
+    const newFile = new File(new Date(), 24, req.body.author, uploadPath);
+    user.files.push(newFile);
+    const index = users.findIndex((u) => u.name === user.name);
+    users.splice(index, 1, user);
+    fs.writeFileSync(databasePath, JSON.stringify(users));
+
+    // UPLOAD FILE TO DATABASE
+    uploadedFile.mv(uploadPath, (err) =>
+      err ? res.status(500).send(err) : res.status(200).send("File uploaded!")
+    );
+
+    // CATCH THROWN ERRORS
+  } catch (e) {
+    res.status(500).send({
+      error: e.message,
+      value: e.value,
+    });
+  }
+});
+// DOWNLOAD
+app.get("/download", async (req, res) => {
+  try {
+    const users = JSON.parse(fs.readFileSync(databasePath));
+    let files = [];
+    users.forEach((user) => {
+      user.files.forEach((file) => files.push(file));
+    });
+
+    // FIND SPECIFIC FILE
+    let downloadFile;
+    const searchFile = req.query.file;
+    files.forEach((f) => {
+      const fileName = f.uploadPath.substring(
+        f.uploadPath.lastIndexOf("/") + 1
+      );
+      if (fileName === searchFile) {
+        downloadFile = f;
+      }
+    });
+
+    if (!downloadFile) {
+      throw new Error(`${searchFile} doesn't exist`);
+    }
+
+    res.download(downloadFile.uploadPath, (err) => {
+      if (err) throw new Error(err);
+    });
+  } catch (e) {
+    res.status(500).send({
+      error: e.message,
+      value: e.value,
+    });
+  }
+});
 
 // FUNCTION TO FIND AND DELETE EXPIRED FILES
 function expiredFileChecker() {
-    const filesArray = JSON.parse(fs.readFileSync(jsonPath)).filter((file) => {
-        if (new Date(file.expirationDate) < new Date()) {
-            fs.unlinkSync(file.uploadPath);
-            return false;
-        } else return true;
+  // GET USERS AND GET ALL FILES
+  const users = JSON.parse(fs.readFileSync(databasePath));
+  users.forEach((user) => {
+    const userFiles = user.files.filter((file) => {
+      if (new Date(file.expirationDate) < new Date()) {
+        fs.unlinkSync(file.uploadPath);
+        return false;
+      } else return true;
     });
-    fs.writeFileSync(jsonPath, JSON.stringify(filesArray));
+    user.files = userFiles;
+  });
+  fs.writeFileSync(databasePath, JSON.stringify(users));
 }
-
-app.post("/login", async (req, res) => {
-    try {
-        // CHECK IF CREDENTIALS ARE MISSING
-        if (!req.body.name || !req.body.password) throw new Error("Missing credentials.");
-
-        // READ USERS
-        const users = JSON.parse(fs.readFileSync(__dirname + "/users.json"));
-
-        // FIND SPECIFIC USER
-        const user = users.filter((user) => user.name.toLowerCase() == req.body.name);
-        // COMPARE PASSWORDS
-        if (user.length != 0) {
-            user[0].password == req.body.password
-                ? res.status(200).send({ success: "Login successful.", name: user[0].name })
-                : res.status(400).send({ error: "Incorrect password." });
-        } else throw new Error(`User ${req.body.name} does not exist.`);
-    } catch (e) {
-        res.status(500).send({
-            error: e.message,
-            value: e.value,
-        });
-    }
-});
-
-app.post("/uploads", async (req, res) => {
-    try {
-        console.log(req.body.file);
-    } catch (e) {
-        res.status(500).send({
-            error: e.message,
-            value: e.value,
-        });
-    }
-});
-
-app.post("/upload", async (req, res) => {
-    try {
-        // CHECK IF EMPTY
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send("No files were uploaded.");
-        }
-
-        // CHECK IF FILE ALREADY EXISTS
-        const file = req.files.file;
-        const uploadPath = __dirname + "/uploads/" + file.name;
-        const filesArray = JSON.parse(fs.readFileSync(jsonPath));
-
-        filesArray.forEach((file) => {
-            if (file.uploadPath === uploadPath) {
-                throw new Error("File already exists");
-            }
-        });
-
-        // CHECK IF FILE SIZE TO LARGE
-        const MAX_FILE_SIZE = Math.pow(10, 9); // 1,000,000,000 BYTES => 1000 MB => 1 GB
-        if (file.size > MAX_FILE_SIZE) return res.status(400).send("File too large!");
-
-        // WRITE FILE TO JSON
-        const newFile = new File(new Date(), 24, req.body.author, uploadPath);
-        filesArray.push(newFile);
-        fs.writeFileSync(jsonPath, JSON.stringify(filesArray));
-
-        // UPLOAD FILE TO DATABASE
-        file.mv(uploadPath, function (err) {
-            if (err) {
-                return res.status(500).send(err);
-            }
-            res.redirect(req.get("referer") + "home.html");
-        });
-
-        // CATCH THROWN ERRORS
-    } catch (e) {
-        res.status(500).send({
-            error: e.message,
-            value: e.value,
-        });
-    }
-});
-
-app.get("/download", async (req, res) => {
-    try {
-        const files = JSON.parse(fs.readFileSync(jsonPath));
-
-        // FIND SPECIFIC FILE
-        let file = files.filter((file) => {
-            const fileName = file.uploadPath.substring(file.uploadPath.lastIndexOf("/") + 1);
-            return fileName === req.query.file;
-        });
-
-        if (file.length != 0) {
-            res.download(file[0].uploadPath, (err) => {
-                if (err) {
-                    throw new Error(err);
-                }
-            });
-        } else {
-            throw new Error("No file found.");
-        }
-    } catch (e) {
-        res.status(500).send({
-            error: e.message,
-            value: e.value,
-        });
-    }
-});
 
 // LISTEN TO PORT FOR FILE UPLOAD
 app.listen(port, () => {
-    console.log(`Listening on port http://localhost:${port}`);
+  console.log(`Listening on port http://localhost:${port}`);
 });
