@@ -8,6 +8,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const https = require("https");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 // GLOBAL VARIABLES
@@ -32,6 +33,19 @@ setInterval(() => {
     expiredFileChecker();
 }, 3600000); // 3600000 => 1hr
 
+app.post("/hashpassword", async (req, res) => {
+    try {
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(req.body.passwordHash, salt);
+        res.send(hashedPassword);
+    } catch (e) {
+        res.status(500).send({
+            error: e.message,
+            value: e.value,
+        });
+    }
+});
+
 // LOGIN
 app.post("/login", async (req, res) => {
     try {
@@ -45,7 +59,7 @@ app.post("/login", async (req, res) => {
         if (!user) {
             throw new Error(`User ${tempUser.name} does not exist.`);
         }
-        if (user.passwordHash !== tempUser.passwordHash) {
+        if (!bcrypt.compareSync(req.body.passwordHash, user.passwordHash)) {
             throw new Error(`Password is incorrect`);
         }
         // SEND SUCCES
@@ -150,19 +164,19 @@ function expiredFileChecker() {
 }
 
 // LISTEN TO PORT FOR FILE UPLOAD
-// app.listen(port, () => {
-//     console.log(`Listening on port http://localhost:${port}`);
-// });
+app.listen(port, () => {
+    console.log(`Listening on port http://localhost:${port}`);
+});
 
 // HTTPS LISTEN
-https
-    .createServer(
-        {
-            key: process.env.KEY,
-            cert: process.env.CERT,
-        },
-        app
-    )
-    .listen(port, () => {
-        console.log(`Listening HTTPS`);
-    });
+// https
+//     .createServer(
+//         {
+//             key: process.env.KEY,
+//             cert: process.env.CERT,
+//         },
+//         app
+//     )
+//     .listen(port, () => {
+//         console.log(`Listening HTTPS`);
+//     });
