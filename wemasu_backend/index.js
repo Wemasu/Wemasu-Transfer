@@ -33,19 +33,6 @@ setInterval(() => {
     expiredFileChecker();
 }, 3600000); // 3600000 => 1hr
 
-app.post("/hashpassword", async (req, res) => {
-    try {
-        const salt = bcrypt.genSaltSync(10);
-        const hashedPassword = bcrypt.hashSync(req.body.passwordHash, salt);
-        res.send(hashedPassword);
-    } catch (e) {
-        res.status(500).send({
-            error: e.message,
-            value: e.value,
-        });
-    }
-});
-
 // LOGIN
 app.post("/login", async (req, res) => {
     try {
