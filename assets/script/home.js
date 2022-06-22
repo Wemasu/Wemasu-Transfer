@@ -11,9 +11,8 @@ function initCookies() {
     window.location = "../index.html";
   }
   if (cookie.getCookie("latest_uploaded_file")) {
-    const downloadUrl = `http://localhost:1337/download?file=${cookie.getCookie(
-      "latest_uploaded_file"
-    )}`;
+    //https://wemasu.uksouth.cloudapp.azure.com/
+    const downloadUrl = `https://wemasu.uksouth.cloudapp.azure.com:1337/download?file=${cookie.getCookie("latest_uploaded_file")}`;
 
     // DISPLAY LINK TEXT
     const p = document.createElement("p");
