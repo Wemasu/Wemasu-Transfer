@@ -8,6 +8,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const https = require("https");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 // GLOBAL VARIABLES
@@ -45,7 +46,7 @@ app.post("/login", async (req, res) => {
     if (!user) {
       throw new Error(`User ${tempUser.name} does not exist.`);
     }
-    if (user.passwordHash !== tempUser.passwordHash) {
+    if (!bcrypt.compareSync(req.body.passwordHash, user.passwordHash)) {
       throw new Error(`Password is incorrect`);
     }
     // SEND SUCCES
@@ -57,6 +58,7 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+
 // UPLOAD
 app.post("/upload", async (req, res) => {
   try {
@@ -64,6 +66,7 @@ app.post("/upload", async (req, res) => {
     if (!req.files || Object.keys(req.files).length === 0) {
       throw new Error(`No upload file selected`);
     }
+
     // GET ALL USERS
     const users = JSON.parse(fs.readFileSync(databasePath));
     // GET USER THAT SENT REQUEST
@@ -99,6 +102,7 @@ app.post("/upload", async (req, res) => {
     });
   }
 });
+
 // DOWNLOAD
 app.get("/download", async (req, res) => {
   try {
