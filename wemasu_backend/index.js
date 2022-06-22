@@ -82,7 +82,7 @@ app.post("/upload", async (req, res) => {
     if (uploadedFile.size > MAX_FILE_SIZE) throw new Error(`File is too large. Max file size is ${MAX_FILE_SIZE}`);
 
     // WRITE NEW FILE TO USER IN JSON
-    const newFile = new File(new Date(), 24, req.body.author, uploadPath);
+    const newFile = new File(new Date(), req.body.hours, req.body.author, uploadPath);
     user.files.push(newFile);
     const index = users.findIndex((u) => u.name === user.name);
     users.splice(index, 1, user);
@@ -150,19 +150,19 @@ function expiredFileChecker() {
 }
 
 // LISTEN TO PORT FOR FILE UPLOAD
-// app.listen(port, () => {
-//     console.log(`Listening on port http://localhost:${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Listening on port http://localhost:${port}`);
+});
 
 // HTTPS LISTEN
-https
-  .createServer(
-    {
-      key: fs.readFileSync("./ssl/privkey.pem"),
-      cert: fs.readFileSync("./ssl/cert.pem"),
-    },
-    app
-  )
-  .listen(port, () => {
-    console.log(`Listening HTTPS`);
-  });
+// https
+//   .createServer(
+//     {
+//       key: fs.readFileSync("/etc/letsencrypt/live/wemasu.uksouth.cloudapp.azure.com/privkey.pem"),
+//       cert: fs.readFileSync("/etc/letsencrypt/live/wemasu.uksouth.cloudapp.azure.com/cert.pem"),
+//     },
+//     app
+//   )
+//   .listen(port, () => {
+//     console.log(`Listening HTTPS`);
+//   });
