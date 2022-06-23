@@ -24,8 +24,7 @@ header {
 /* start of body upmake*/
 body {
     font-family: "Roboto", sans-serif;
-    /* background-color: #eee; */
-    background-color: eee;
+    background-color: #eee;
     height: 100vh;
     display: flex;
     justify-content: space-between;
@@ -42,7 +41,6 @@ body {
     width: 50vh;
     padding: 20px;
     border: 2px solid blue;
-    border-radius: 10px;
 
     display: flex;
     flex-direction: column;

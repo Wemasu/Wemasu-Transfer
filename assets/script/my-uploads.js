@@ -41,17 +41,28 @@ function displayUploads(uploads) {
     let expirationDate = new Date(upload.expirationDate).toLocaleString();
     // DOWNLOAD LINK
     const link = `http://127.0.0.1:5500/file.html?userName=${userName}&fileName=${fileName}`;
+    let timeLeft = new Date(upload.expirationDate).getTime() - new Date().getTime();
+    timeLeft = timeLeft / 3600000;
+    timeLeft = timeLeft.toFixed(2);
+    let size = upload.fileSize > 1000000 ? `${(upload.fileSize / 1000000).toFixed(2)} MB` : `${(upload.fileSize / 1000).toFixed(1)} KB`;
 
-    div.innerHTML += `<div id="upload">
-            <h2 id="name">Name: ${fileName}</h2>
-            <div id="dates">
-            <p id="uploadDate">Uploaded: ${uploadDate}</p>
-            <p id="expirationDate">Expires: ${expirationDate}</p>
-            </div>
-            <div id="buttons">
-            <button id="share" class="share" data-link="${link}">Share</button>
-            <a href="http://localhost:1337/download?file=${fileName}" id="download">Download</a>
-            </div>
+    div.innerHTML += `
+            <div id="upload">
+              <div id="upload-header">
+                <h2 id="name">Name: ${fileName}</h2>
+                <h2 id="size">Size: ${size}</h2>
+               </div> 
+              <div id="dates">
+                <p id="uploadDate">Uploaded: ${uploadDate}</p>
+                <p id="timeLeft">Expires in: ${timeLeft} hours</p>
+                <p id="expirationDate">Expires on: ${expirationDate}</p>
+                
+              </div>
+              <div id="buttons">
+                <button id="share" class="share" data-link="${link}">Share</button>
+                <a href="http://localhost:1337/download?file=${fileName}" id="download">Download</a>
+                <button id="delete">Delete</button> 
+              </div>
             </div>`;
   });
   const buttons_share = document.querySelectorAll(".share");

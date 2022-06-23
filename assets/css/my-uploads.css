@@ -3,101 +3,182 @@
 *,
 *::after,
 *::before {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
+/* start of header upmake*/
+header {
+  color: white;
+  background-color: blue;
+  width: 100%;
+  font-size: 3rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+#menu {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  align-items: center;
+  gap: 20px;
+}
+
+#welcome {
+  text-decoration: none;
+  color: white;
+  text-align: center;
+  margin: 20px;
+  font-size: 3rem;
+}
+
+header a {
+  text-decoration: none;
+  color: white;
+  background-color: blue;
+  padding: 5px;
+  margin: 10px;
+}
+
+header a:hover {
+  background-color: white;
+  color: blue;
+}
+
+/* end of header upmake*/
+/* start of body upmake*/
 body {
-    font-family: "Roboto", sans-serif;
-    background-color: #eee;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  font-family: "Roboto", sans-serif;
+  background-color: #eee;
+  height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
 }
 
-.banner,
-.footer {
-    color: white;
-    display: flex;
-    height: auto;
-    background-color: blue;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0px 20px;
-}
-
+/* end of body upmake*/
+/* start of main upmake*/
 main {
-    margin: 100px 0px;
-    width: 50%;
-    overflow-y: scroll;
+  margin: 100px;
+  width: 50%;
+  overflow-y: scroll;
 }
 
-.footer {
-    display: flex;
-    justify-content: center;
-    bottom: 0;
-}
-
-.banner a,
-#welcome,
-.footer h1 {
-    text-decoration: none;
-    color: white;
-    text-align: center;
-    margin: 20px;
-    font-size: 3rem;
-}
-
+/* end of main upmake*/
+/* begin of uploads upmake*/
 #uploads-container {
-    color: blue;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 20px;
-}
-
-#uploads-container > #upload > #dates {
-    display: flex;
-    gap: 20px;
-}
-
-#uploads-container > #upload > #dates > p {
-    width: 50%;
+  color: blue;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
 }
 
 #upload {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #fff;
+  padding: 20px;
 }
 
+#upload-header {
+  display: flex;
+  justify-content: space-between;
+}
+/* end of uploads upmake*/
+/* begin of dates upmake*/
+#uploads-container > #upload > #dates {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+#uploads-container > #upload > #dates > p {
+  width: 50%;
+}
+/* end of dates upmake*/
+/* begin of buttons upmake*/
 #uploads-container > #upload > #buttons {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
 }
 
 #download,
-#share {
-    background-color: blue;
-    color: white;
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 10px;
-    border: 0px solid;
-    width: 50%;
-    min-width: 100px;
-    text-align: center;
-    text-decoration: none;
+#share,
+#delete {
+  background-color: blue;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 10px;
+  border: 0px solid;
+  width: 50%;
+  min-width: 100px;
+  text-align: center;
+  text-decoration: none;
 }
 
 #download:hover,
-#share:hover {
-    background-color: #eee;
-    color: blue;
+#share:hover,
+#delete:hover {
+  background-color: #eee;
+  color: blue;
 }
+/* end of buttons upmake*/
+/*start of footer upmake*/
+.footer {
+  color: white;
+  background-color: blue;
+  height: auto;
+  width: 100%;
+  padding: 25px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+.footer a {
+  color: white;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/*end of footer upmake*/
+/*start of mobile upmake*/
+@media (max-width: 530px), (max-height: 640px) {
+  header {
+    font-size: 20px;
+  }
+  #welcome {
+    font-size: 20px;
+  }
+
+  body {
+    background-color: white;
+  }
+
+  main {
+    width: 100%;
+    margin: 0px;
+  }
+
+  #upload {
+    border-top: 1px solid blue;
+  }
+
+  .footer {
+    padding: 20px;
+    font-size: 10px;
+  }
+}
+
+/*end of mobile upmake*/
