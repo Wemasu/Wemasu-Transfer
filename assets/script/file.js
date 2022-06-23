@@ -1,9 +1,12 @@
 "use strict";
 
 window.onload = () => {
-  //   init();
-  getFile();
+  init();
 };
+
+function init() {
+  getFile();
+}
 
 function getFile() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -21,20 +24,19 @@ function getFile() {
 
 function displayFile(file) {
   const div = document.getElementById("file-container");
-  let timeleft = new Date(file.expirationDate).getTime() - new Date().getTime();
-  timeleft = timeleft / 3600000;
-  timeleft = timeleft.toFixed(2);
+  let timeLeft = new Date(file.expirationDate).getTime() - new Date().getTime();
+  timeLeft = timeLeft / 3600000;
+  timeLeft = timeLeft.toFixed(2);
   let size = file.fileSize / 1000000;
   size = size.toFixed(3);
   div.innerHTML += `
   <div id="file">
-  <h1>File: ${file.fileName}</h1>
-  <h1>Uploader: ${file.author}</h1>
-  <h1>Expires in: ${timeleft}h</h1>
-  <h1>Size: ${size}MB</h1>
-  <div id="button">
+  <h2 id="fileName">File Name: ${file.fileName}</h2>
+  <h2 id="author">Author:           ${file.author}</h2>
+  <h2 id="timeLeft">Expires in:         ${timeLeft}h</h2>
+  <h2 id="size">Size:               ${size}MB</h2>
+  </div>
   <a href="http://localhost:1337/download?file=${file.fileName}" id="download">Download</a>
-  </div>
-  </div>
+  
   `;
 }

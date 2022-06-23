@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap");
+
+*,
+*::after,
+*::before {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* start of header upmake*/
+header {
+    color: white;
+    background-color: blue;
+    width: 100%;
+    font-size: 50px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* end of header upmake*/
+/* start of body upmake*/
+body {
+    font-family: "Roboto", sans-serif;
+    background-color: #eee;
+    height: 100vh;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* end of body upmake*/
+/* start of upmake*/
+#file-container {
+    color: blue;
+    background-color: white;
+    min-height: 100px;
+    width: 50vh;
+    padding: 20px;
+    border: 2px solid blue;
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 100px;
+}
+
+#file {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+#download {
+    background-color: blue;
+    color: white;
+    width: 100%;
+    min-width: 100px;
+
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 10px;
+    border: 0px solid;
+    text-decoration: none;
+    text-align: center;
+}
+
+#download:hover {
+    background-color: #eee;
+    color: blue;
+}
+
+/* end of file upmake*/
+/*start of footer upmake*/
+.footer {
+    color: white;
+    background-color: blue;
+    height: auto;
+    width: 100%;
+    padding: 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/*end of footer upmake*/
