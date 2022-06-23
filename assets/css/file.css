@@ -24,7 +24,8 @@ header {
 /* start of body upmake*/
 body {
     font-family: "Roboto", sans-serif;
-    background-color: #eee;
+    /* background-color: #eee; */
+    background-color: red;
     height: 100vh;
     display: flex;
     justify-content: space-between;
@@ -100,3 +101,32 @@ body {
 }
 
 /*end of footer upmake*/
+/*start of mobile upmake*/
+@media (max-width: 530px),(max-height: 640px) {
+    header {
+        font-size: 20px;
+    }
+
+    body {
+        background-color: white;
+    }
+
+    #file-container{
+        width: 100%;
+        padding: 0px;
+        border: 2px none blue;
+        gap: 0px;
+    }
+
+    #download{
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+        
+    .footer {
+        padding: 20px;
+        font-size: 10px;
+     }
+}
+/*end of mobile upmake*/
