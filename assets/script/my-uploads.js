@@ -60,7 +60,7 @@ function displayUploads(uploads) {
               </div>
               <div id="buttons">
                 <button id="share" class="share" data-link="${link}">Share</button>
-                <a href="http://localhost:1337/download?file=${fileName}" id="download">Download</a>
+                <a href="http://localhost:1337/download?userName=${userName}&fileName=${fileName}" id="download">Download</a>
                 <button id="delete">Delete</button> 
               </div>
             </div>`;
