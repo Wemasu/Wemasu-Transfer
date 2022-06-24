@@ -18,12 +18,12 @@ function initCookies() {
 
         // DISPLAY LINK TEXT
         const p = document.createElement("p");
-        p.textContent = downloadUrl;
+        p.textContent = "File uploaded!";
         p.setAttribute("id", "download_url");
 
         // COPY LINK BUTTON
         const btn = document.createElement("button");
-        btn.textContent = "COPY LINK";
+        btn.textContent = "Copy download URL";
         btn.onclick = () => navigator.clipboard.writeText(downloadUrl);
 
         // ELEMENT TO INSERT IN TO
@@ -40,6 +40,13 @@ function init() {
     const welcome = document.querySelector("#welcome");
     const hidden_input_author = document.querySelector("#author");
     const btn_upload = document.querySelector("#upload");
+    const file_upload = document.querySelector("#file");
+
+    file_upload.addEventListener("change", () => {
+        const file = file_upload.files[0];
+        const textFileSelected = (document.querySelector("#selected-file").textContent = file.name);
+    });
+
     btn_upload.addEventListener("click", (e) => {
         storeUploadedFileInCookie();
     });
