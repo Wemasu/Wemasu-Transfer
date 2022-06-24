@@ -110,6 +110,9 @@ app.get("/download", async (req, res) => {
     const users = JSON.parse(fs.readFileSync(databasePath));
     const user = users.find((user) => user.name.toLowerCase() === req.query.userName.toLowerCase());
     let file;
+    if (!user) {
+      throw new Error(`User doesn't exist`);
+    }
 
     // FIND FILE FROM USER AND CHECK IF IT EXISTS
     user.files.forEach((f) => {
@@ -119,9 +122,7 @@ app.get("/download", async (req, res) => {
         file = f;
       }
     });
-    if (!user) {
-      throw new Error(`User doesn't exist`);
-    }
+
     if (!file) {
       throw new Error(`File doesn't exist`);
     }
@@ -159,6 +160,9 @@ app.get("/file/:userName/:fileName", async (req, res) => {
     const users = JSON.parse(fs.readFileSync(databasePath));
     const user = users.find((user) => user.name.toLowerCase() === req.params["userName"].toLowerCase());
     let file;
+    if (!user) {
+      throw new Error(`User doesn't exist`);
+    }
     user.files.forEach((f) => {
       let checkPath = f.uploadPath.split("/");
       checkPath = checkPath[checkPath.length - 1];
@@ -166,9 +170,7 @@ app.get("/file/:userName/:fileName", async (req, res) => {
         file = f;
       }
     });
-    if (!user) {
-      throw new Error(`User doesn't exist`);
-    }
+
     if (!file) {
       throw new Error(`File doesn't exist`);
     }
