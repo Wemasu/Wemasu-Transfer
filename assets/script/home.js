@@ -10,7 +10,7 @@ function initCookies() {
     if (!cookie.getCookie("name")) {
         window.location = "../index.html";
     }
-    if (cookie.getCookie("uploaded_file") && performance.getEntriesByType("navigation")[0].type === "navigate") {
+    if (cookie.getCookie("uploaded_file")) {
         //https://wemasu.uksouth.cloudapp.azure.com/
         const author = cookie.getCookie("author");
         const uploadedFile = cookie.getCookie("uploaded_file");
@@ -45,13 +45,17 @@ function init() {
     const btn_upload = document.querySelector("#upload");
     const file_upload = document.querySelector("#file");
 
-    file_upload.addEventListener("change", () => {
+    file_upload.addEventListener("change", (e) => {
+        e.preventDefault();
         const file = file_upload.files[0];
         const textFileSelected = (document.querySelector("#selected-file").textContent = file.name);
     });
 
     btn_upload.addEventListener("click", (e) => {
-        storeUploadedFileInCookie();
+        e.preventDefault();
+        const file = file_upload.files[0];
+        const author = hidden_input_author.value;
+        upload(file, author);
     });
     const user = cookie.getCookie("name");
 
@@ -59,12 +63,28 @@ function init() {
     hidden_input_author.value = user;
 }
 
-function storeUploadedFileInCookie() {
-    // INPUTS
-    const file = document.querySelector("#file").files;
-    const author = document.querySelector("#author").value;
+function upload(file, author) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("author", author);
+    fetch("http://localhost:1337/upload", {
+        method: "POST",
+        body: formData,
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data);
+            if (data.error) {
+                document.querySelector("#error").innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                storeUploadedFileInCookie(file.name, author);
+            }
+        });
+}
+
+function storeUploadedFileInCookie(file, author) {
     const cookie_lifetime = 10; // in seconds
 
-    cookie.setCookie("uploaded_file", file[0].name, { "max-age": cookie_lifetime });
+    cookie.setCookie("uploaded_file", file.name, { "max-age": cookie_lifetime });
     cookie.setCookie("author", author, { "max-age": cookie_lifetime });
 }
