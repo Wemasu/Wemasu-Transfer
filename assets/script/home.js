@@ -24,7 +24,10 @@ function initCookies() {
         // COPY LINK BUTTON
         const btn = document.createElement("button");
         btn.textContent = "Copy download URL";
-        btn.onclick = () => navigator.clipboard.writeText(downloadUrl);
+        btn.onclick = () => {
+            navigator.clipboard.writeText(downloadUrl);
+            btn.textContent = "Copied to clipboard";
+        };
 
         // ELEMENT TO INSERT IN TO
         const div = document.querySelector("#latest_uploaded_file");
