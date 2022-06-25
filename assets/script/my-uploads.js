@@ -60,8 +60,8 @@ function displayUploads(uploads) {
               </div>
               <div id="buttons">
                 <button id="share" class="share" data-link="${shareLink}">Share</button>
-                <a href="http://localhost:1337/download?userName=${upload.author}&fileName=${upload.fileName}" id="download">Download</a>
-                <button id="delete" class="delete" data-username="${upload.author}" data-filename="${upload.fileName}">Delete</button> 
+                <a href="http://localhost:1337/download?userName=${upload.author}&fileName=${upload.hashedFileName}" id="download">Download</a>
+                <button id="delete" class="delete" data-username="${upload.author}" data-filename="${upload.hashedFileName}">Delete</button> 
               </div>
             </div>`;
     });

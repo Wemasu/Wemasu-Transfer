@@ -92,7 +92,7 @@ app.get("/download", async (req, res) => {
         // CHECK IF USER EXISTS AND GET USER
         const user = getUser(req.query.userName);
         // CHECK IF FILE EXISTS AND GET FILE
-        const file = user.getFile(req.query.fileName);
+        const file = user.getHashedFile(req.query.fileName);
         // INITIATE DOWNLOAD
         res.download(file.uploadPath, (err) => {
             if (err) throw new Error(err);
@@ -166,7 +166,7 @@ app.post("/delete", async (req, res) => {
         // CHECK IF USER EXISTS AND GET USER
         const user = getUser(req.body.userName);
         // CHECK IF FILE EXISTS AND GET FILE
-        const file = user.getFile(req.body.fileName);
+        const file = user.getHashedFile(req.body.fileName);
         // DELETE FILE
         fs.unlinkSync(file.uploadPath);
         user.removeFile(file.fileName);

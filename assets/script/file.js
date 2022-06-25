@@ -34,7 +34,7 @@ function displayFile(file) {
     <h2 id="timeLeft">Expires in: ${timeLeft}h</h2>
     <h2 id="size">${size}</h2>
   </div>
-  <a href="http://localhost:1337/download?userName=${file.author}&fileName=${file.fileName}" id="download">Download</a>
+  <a href="http://localhost:1337/download?userName=${file.author}&fileName=${file.hashedFileName}" id="download">Download</a>
   
   `;
 }
