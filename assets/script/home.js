@@ -15,6 +15,7 @@ function initCookies() {
         const author = cookie.getCookie("author");
         const uploadedFile = cookie.getCookie("uploaded_file");
         const downloadUrl = `http://127.0.0.1:5500/file.html?userName=${author}&fileName=${uploadedFile}`;
+        const downloadUrlEnc = encodeURI(downloadUrl);
 
         // DISPLAY LINK TEXT
         const p = document.createElement("p");
@@ -25,7 +26,7 @@ function initCookies() {
         const btn = document.createElement("button");
         btn.textContent = "Copy download URL";
         btn.onclick = () => {
-            navigator.clipboard.writeText(downloadUrl);
+            navigator.clipboard.writeText(downloadUrlEnc);
             btn.textContent = "Copied to clipboard";
         };
 
@@ -73,11 +74,10 @@ function upload(file, author) {
     })
         .then((res) => res.json())
         .then((data) => {
-            console.log(data);
             if (data.error) {
                 document.querySelector("#error").innerHTML = `<p class="error">${data.error}</p>`;
             } else {
-                storeUploadedFileInCookie(file.name, author);
+                storeUploadedFileInCookie(file, author);
             }
         });
 }
