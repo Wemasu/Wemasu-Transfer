@@ -124,13 +124,31 @@ app.get("/uploads/:user", async (req, res) => {
     }
 });
 
-// RETURN FILE FOR DOWNLOADPAGE
-app.get("/file/:userName/:fileName", async (req, res) => {
+// GET FILE (NON-HASHED URL)
+app.get("/file-nh/:userName/:fileName", async (req, res) => {
     try {
         // CHECK IF USER EXISTS AND GET USER
         const user = getUser(req.params["userName"]);
         // CHECK IF FILE EXISTS AND GET FILE
         const file = user.getFile(req.params.fileName);
+        // RETURN FILE
+        res.status(200).send(file);
+        // CATCH AND SEND ERROR MESSAGE
+    } catch (e) {
+        res.status(500).send({
+            error: e.message,
+            value: e.value,
+        });
+    }
+});
+
+// RETURN FILE FOR DOWNLOAD PAGE (HASHED URL)
+app.get("/file-h/:userName/:fileName", async (req, res) => {
+    try {
+        // CHECK IF USER EXISTS AND GET USER
+        const user = getUser(req.params["userName"]);
+        // CHECK IF FILE EXISTS AND GET FILE
+        const file = user.getHashedFile(req.params["fileName"]);
         // RETURN FILE
         res.status(200).send(file);
         // CATCH AND SEND ERROR MESSAGE

@@ -14,7 +14,11 @@ function initCookies() {
         //https://wemasu.uksouth.cloudapp.azure.com/
         const author = cookie.getCookie("author");
         const uploadedFile = cookie.getCookie("uploaded_file");
-        const downloadUrl = `http://127.0.0.1:5500/file.html?userName=${author}&fileName=${uploadedFile}`;
+        let downloadUrl = "";
+
+        fetch(`http://localhost:1337/file-nh/${author}/${uploadedFile}`)
+            .then((res) => res.json())
+            .then((file) => (downloadUrl = `http://127.0.0.1:5500/file.html?userName=${author}&fileName=${file.hashedFileName}`));
 
         // DISPLAY LINK TEXT
         const p = document.createElement("p");
