@@ -43,6 +43,19 @@ class User {
     else return file;
   }
 
+  removeFile(fileName) {
+    let existsCheck = false;
+    this.#files = this.#files.filter((f) => {
+      if (f.fileName === fileName) {
+        existsCheck = true;
+        return false;
+      } else {
+        return true;
+      }
+    });
+    if (!existsCheck) throw new Error(`${fileName} doesn't exist`);
+  }
+
   toJSON() {
     return {
       name: this.#name,

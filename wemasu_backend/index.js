@@ -143,6 +143,26 @@ app.get("/file/:userName/:fileName", async (req, res) => {
   }
 });
 
+// DELETE
+app.post("/delete", async (req, res) => {
+  try {
+    // CHECK IF USER EXISTS AND GET USER
+    const user = getUser(req.body.userName);
+    // CHECK IF FILE EXISTS AND GET FILE
+    const file = user.getFile(req.body.fileName);
+    // DELETE FILE
+    fs.unlinkSync(file.uploadPath);
+    user.removeFile(file.fileName);
+    updateUserInJSON(user);
+    // CATCH AND SEND ERROR MESSAGE
+  } catch (e) {
+    res.status(500).send({
+      error: e.message,
+      value: e.value,
+    });
+  }
+});
+
 // FUNCTION TO FIND AND DELETE EXPIRED FILES
 function expiredFileChecker() {
   // GET USERS AND GET ALL FILES

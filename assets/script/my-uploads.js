@@ -61,13 +61,14 @@ function displayUploads(uploads) {
               <div id="buttons">
                 <button id="share" class="share" data-link="${link}">Share</button>
                 <a href="http://localhost:1337/download?userName=${userName}&fileName=${fileName}" id="download">Download</a>
-                <button id="delete">Delete</button> 
+                <button id="delete" class="delete" data-username="${userName}" data-filename="${fileName}">Delete</button> 
               </div>
             </div>`;
   });
   const buttons_share = document.querySelectorAll(".share");
   buttons_share.forEach((button) =>
     button.addEventListener("click", () => {
+      console.log("click");
       http: navigator.clipboard.writeText(`${button.dataset.link}`);
       //http:localhost:1337/download?file=${button.dataset.filename}
       button.textContent = "Copied to clipboard";
@@ -76,4 +77,25 @@ function displayUploads(uploads) {
       }, 2000);
     })
   );
+
+  const buttons_delete = document.querySelectorAll(".delete");
+  buttons_delete.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (window.confirm(`Delete this file?`)) {
+        deleteFile(button.getAttribute("data-username"), button.getAttribute("data-filename"));
+      }
+    });
+  });
+}
+
+function deleteFile(userName, fileName) {
+  fetch("http://localhost:1337/delete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userName: userName, fileName: fileName }),
+  })
+    .then((res) => {
+      getAllUploads();
+    })
+    .catch((error) => console.error(`something went wrong: `, error));
 }
