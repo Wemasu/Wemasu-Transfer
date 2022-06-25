@@ -28,6 +28,7 @@ function getAllUploads() {
 
 function displayUploads(uploads) {
   const div = document.querySelector("#uploads-container");
+  uploads.reverse();
   uploads.forEach((upload, index) => {
     // PREP DATA
     // FILENAME
