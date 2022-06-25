@@ -96,7 +96,10 @@ function deleteFile(userName, fileName) {
     body: JSON.stringify({ userName: userName, fileName: fileName }),
   })
     .then((res) => {
-      getAllUploads();
+      res.json();
     })
-    .catch((error) => console.error(`something went wrong: `, error));
+    .then((data) => {
+      window.location.reload();
+    })
+    .catch((error) => console.error(`Something went wrong: `, error));
 }
