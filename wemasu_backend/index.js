@@ -39,19 +39,15 @@ app.post("/login", async (req, res) => {
   try {
     // CHECK IF CREDENTIALS ARE MISSING
     if (!req.body.name || !req.body.passwordHash) throw new Error("Missing credentials.");
-    // GET USERS AND TEMPUSER
-    const users = JSON.parse(fs.readFileSync(databasePath));
-    const tempUser = new User(req.body.name, req.body.passwordHash);
-    // CHECK NAME AND PASSWORD
-    const user = users.find((user) => user.name.toLowerCase() === tempUser.name.toLowerCase());
-    if (!user) {
-      throw new Error(`User ${tempUser.name} does not exist.`);
-    }
+    // CHECK IF USER EXISTS AND GET USER
+    const user = getUser(req.body.name);
+    // CHECK IF PASSWORD MATCHES
     if (!bcrypt.compareSync(req.body.passwordHash, user.passwordHash)) {
       throw new Error(`Password is incorrect`);
     }
     // SEND SUCCES
-    res.status(200).send({ success: "Login successful.", name: tempUser.name });
+    res.status(200).send({ success: "Login successful.", name: user.name });
+    // CATCH AND SEND ERROR MESSAGE
   } catch (e) {
     res.status(500).send({
       error: e.message,
@@ -67,35 +63,22 @@ app.post("/upload", async (req, res) => {
     if (!req.files || Object.keys(req.files).length === 0) {
       throw new Error(`No upload file selected`);
     }
-
-    // GET ALL USERS
-    const users = JSON.parse(fs.readFileSync(databasePath));
-    // GET USER THAT SENT REQUEST
-    const user = users.find((user) => user.name.toLowerCase() === req.body.author.toLowerCase());
-    // ASSIGN UPLOADEDFILE & UPLOADEDPATH
+    // CHECK IF USER EXISTS AND GET USER
+    const user = getUser(req.body.author);
+    // CREATE FILE
     const uploadedFile = req.files.file;
     const uploadPath = `${__dirname}/uploads/${user.name}/${uploadedFile.name}`;
-    // CHECK IF FILE ALREADY EXISTS
-    user.files.forEach((file) => {
-      if (file.uploadPath === uploadPath) {
-        throw new Error("File already exists");
-      }
-    });
+    const newFile = new File(new Date(), req.body.hours, req.body.author, uploadPath, uploadedFile.name, uploadedFile.size);
     // CHECK IF FILE SIZE TO LARGE
     const MAX_FILE_SIZE = Math.pow(10, 9); // 1,000,000,000 BYTES => 1000 MB => 1 GB
     if (uploadedFile.size > MAX_FILE_SIZE) throw new Error(`File is too large. Max file size is ${MAX_FILE_SIZE}`);
-
+    // CHECK IF FILE ALREADY EXISTS AND ADD TO USER
+    user.addFile(newFile);
     // WRITE NEW FILE TO USER IN JSON
-    const newFile = new File(new Date(), req.body.hours, req.body.author, uploadPath, uploadedFile.name, uploadedFile.size);
-    user.files.push(newFile);
-    const index = users.findIndex((u) => u.name === user.name);
-    users.splice(index, 1, user);
-    fs.writeFileSync(databasePath, JSON.stringify(users));
-
+    updateUserInJSON(user);
     // UPLOAD FILE TO DATABASE
     uploadedFile.mv(uploadPath, (err) => (err ? res.status(500).send(err) : res.redirect(req.get("referer") + "home.html")));
-
-    // CATCH THROWN ERRORS
+    // CATCH AND SEND ERROR MESSAGE
   } catch (e) {
     res.status(500).send({
       error: e.message,
@@ -107,29 +90,15 @@ app.post("/upload", async (req, res) => {
 // DOWNLOAD
 app.get("/download", async (req, res) => {
   try {
-    const users = JSON.parse(fs.readFileSync(databasePath));
-    const user = users.find((user) => user.name.toLowerCase() === req.query.userName.toLowerCase());
-    let file;
-    if (!user) {
-      throw new Error(`User doesn't exist`);
-    }
-
-    // FIND FILE FROM USER AND CHECK IF IT EXISTS
-    user.files.forEach((f) => {
-      let checkPath = f.uploadPath.split("/");
-      checkPath = checkPath[checkPath.length - 1];
-      if (checkPath === req.query.fileName) {
-        file = f;
-      }
-    });
-
-    if (!file) {
-      throw new Error(`File doesn't exist`);
-    }
+    // CHECK IF USER EXISTS AND GET USER
+    const user = getUser(req.query.userName);
+    // CHECK IF FILE EXISTS AND GET FILE
+    const file = user.getFile(req.query.fileName);
     // INITIATE DOWNLOAD
     res.download(file.uploadPath, (err) => {
       if (err) throw new Error(err);
     });
+    // CATCH AND SEND ERROR MESSAGE
   } catch (e) {
     res.status(500).send({
       error: e.message,
@@ -137,44 +106,35 @@ app.get("/download", async (req, res) => {
     });
   }
 });
-// RETURN ALL FILES FROM USER
+
+// RETURN USER UPLOADS FOR MY UPLOADS PAGE
 app.get("/uploads/:user", async (req, res) => {
   try {
-    // ALL USERS
-    const users = JSON.parse(fs.readFileSync(databasePath));
-
-    const user = users.find((user) => user.name.toLowerCase() === req.params["user"].toLowerCase());
-
+    // CHECK IF USER EXISTS AND GET USER
+    const user = getUser(req.params["user"]);
+    // CHECK IF USER HAS UPLOADS
     if (user.files.length == 0) throw new Error(`No uploads for ${user.name} found.`);
+    // RETURN USER UPLOADS
     res.status(200).send(user.files);
   } catch (e) {
+    // CATCH AND SEND ERROR MESSAGE
     res.status(500).send({
       error: e.message,
       value: e.value,
     });
   }
 });
-// TEST FOR DOWNLOADFILE PAGE
+
+// RETURN FILE FOR DOWNLOADPAGE
 app.get("/file/:userName/:fileName", async (req, res) => {
   try {
-    const users = JSON.parse(fs.readFileSync(databasePath));
-    const user = users.find((user) => user.name.toLowerCase() === req.params["userName"].toLowerCase());
-    let file;
-    if (!user) {
-      throw new Error(`User doesn't exist`);
-    }
-    user.files.forEach((f) => {
-      let checkPath = f.uploadPath.split("/");
-      checkPath = checkPath[checkPath.length - 1];
-      if (checkPath === req.params.fileName) {
-        file = f;
-      }
-    });
-
-    if (!file) {
-      throw new Error(`File doesn't exist`);
-    }
+    // CHECK IF USER EXISTS AND GET USER
+    const user = getUser(req.params["userName"]);
+    // CHECK IF FILE EXISTS AND GET FILE
+    const file = user.getFile(req.params.fileName);
+    // RETURN FILE
     res.status(200).send(file);
+    // CATCH AND SEND ERROR MESSAGE
   } catch (e) {
     res.status(500).send({
       error: e.message,
@@ -196,6 +156,26 @@ function expiredFileChecker() {
     });
     user.files = userFiles;
   });
+  fs.writeFileSync(databasePath, JSON.stringify(users));
+}
+
+// FINDS AND RETURNS USER (user class)
+function getUser(name) {
+  // GET USERS AND USEROBJECT
+  const users = JSON.parse(fs.readFileSync(databasePath));
+  const userObject = users.find((user) => user.name.toLowerCase() === name.toLowerCase());
+  // CHECK IF USER EXISTS
+  if (!userObject) {
+    throw new Error(`${name} doesn't exist`);
+  }
+  // INITIATE AND RETURN USER
+  return new User(userObject.name, userObject.passwordHash, userObject.files);
+}
+
+function updateUserInJSON(user) {
+  const users = JSON.parse(fs.readFileSync(databasePath));
+  const index = users.findIndex((u) => u.name === user.name);
+  users.splice(index, 1, user);
   fs.writeFileSync(databasePath, JSON.stringify(users));
 }
 
