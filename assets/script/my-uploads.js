@@ -22,7 +22,13 @@ function getAllUploads() {
     fetch(fetchUrl, { method: "GET" })
         .then((res) => res.json())
         .then((data) => {
-            displayUploads(data);
+            if (data.error) {
+                const div = document.querySelector("#error");
+                div.style.display = "block";
+                div.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                displayUploads(data);
+            }
         });
 }
 
@@ -30,13 +36,10 @@ function displayUploads(uploads) {
     const div = document.querySelector("#uploads-container");
     uploads.reverse();
     uploads.forEach((upload, index) => {
-        console.log(upload);
         // UPLOAD DATE
         let uploadDate = new Date(upload.uploadDate).toLocaleString();
         // EXPIRATION DATE
         let expirationDate = new Date(upload.expirationDate).toLocaleString();
-        // DOWNLOAD LINK
-        const shareLink = `http://127.0.0.1:5500/file.html?userName=${upload.author}&fileName=${upload.hashedFileName}`;
 
         // TIME LEFT
         let timeLeft = new Date(upload.expirationDate).getTime() - new Date().getTime();
@@ -45,6 +48,12 @@ function displayUploads(uploads) {
 
         // FILE SIZE
         let size = upload.fileSize > 1000000 ? `${(upload.fileSize / 1000000).toFixed(2)} MB` : `${(upload.fileSize / 1000).toFixed(1)} KB`;
+
+        // Hashed author name
+        const hashedName = cookie.getCookie("hashedName");
+
+        // DOWNLOAD LINK
+        const shareLink = encodeURI(`http://127.0.0.1:5500/file.html?userName=${hashedName}&fileName=${upload.hashedFileName}`);
 
         div.innerHTML += `
             <div id="upload">
@@ -60,8 +69,8 @@ function displayUploads(uploads) {
               </div>
               <div id="buttons">
                 <button id="share" class="share" data-link="${shareLink}">Share</button>
-                <a href="http://localhost:1337/download?userName=${upload.author}&fileName=${upload.hashedFileName}" id="download">Download</a>
-                <button id="delete" class="delete" data-username="${upload.author}" data-filename="${upload.hashedFileName}">Delete</button> 
+                <a href="http://localhost:1337/download?userName=${hashedName}&fileName=${upload.hashedFileName}" id="download">Download</a>
+                <button id="delete" class="delete" data-username="${hashedName}" data-filename="${upload.hashedFileName}">Delete</button> 
               </div>
             </div>`;
     });

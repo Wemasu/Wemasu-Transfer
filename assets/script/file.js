@@ -10,8 +10,8 @@ function init() {
 
 function getFile() {
     const urlParams = new URLSearchParams(window.location.search);
-    const userName = urlParams.get("userName");
-    const fileName = urlParams.get("fileName");
+    const userName = encodeURIComponent(urlParams.get("userName"));
+    const fileName = encodeURIComponent(urlParams.get("fileName"));
     const fetchUrl = `http://localhost:1337/file-h/${userName}/${fileName}`;
     fetch(fetchUrl, { method: "GET" })
         .then((res) => res.json())
@@ -27,6 +27,11 @@ function displayFile(file) {
     timeLeft = timeLeft.toFixed(2);
     let size = file.fileSize > 1000000 ? `${(file.fileSize / 1000000).toFixed(2)} MB` : `${(file.fileSize / 1000).toFixed(1)} KB`;
 
+    // DOWNLOAD URL BUILD
+    const urlParams = new URLSearchParams(window.location.search);
+    const userName = encodeURIComponent(urlParams.get("userName"));
+    const fileName = encodeURIComponent(urlParams.get("fileName"));
+
     div.innerHTML += `
   <div id="file">
     <h2 id="fileName">File Name: ${file.fileName}</h2>
@@ -34,7 +39,7 @@ function displayFile(file) {
     <h2 id="timeLeft">Expires in: ${timeLeft}h</h2>
     <h2 id="size">${size}</h2>
   </div>
-  <a href="http://localhost:1337/download?userName=${file.author}&fileName=${file.hashedFileName}" id="download">Download</a>
+  <a href="http://localhost:1337/download?userName=${userName}&fileName=${fileName}" id="download">Download</a>
   
   `;
 }

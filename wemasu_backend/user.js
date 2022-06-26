@@ -1,18 +1,25 @@
 const bcrypt = require("bcryptjs");
+require("dotenv").config();
 
 class User {
     #name;
+    #hashedName;
     #passwordHash;
     #files = [];
 
     constructor(name, passwordHash = "secret", files = []) {
         this.#name = name;
+        this.#hashedName = bcrypt.hashSync(name, parseInt(process.env.USER_SALT));
         this.#passwordHash = passwordHash;
         this.#files = files;
     }
 
     get name() {
         return this.#name;
+    }
+
+    get hashedName() {
+        return this.#hashedName;
     }
 
     get passwordHash() {
@@ -71,6 +78,7 @@ class User {
     toJSON() {
         return {
             name: this.#name,
+            hashedName: this.#hashedName,
             passwordHash: this.#passwordHash,
             files: this.#files,
         };
