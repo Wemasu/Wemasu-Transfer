@@ -9,7 +9,6 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const https = require("https");
 const bcrypt = require("bcryptjs");
-const { ok } = require("assert");
 require("dotenv").config();
 
 // GLOBAL VARIABLES
