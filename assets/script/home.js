@@ -63,7 +63,8 @@ function init() {
         e.preventDefault();
         const file = file_upload.files[0];
         const author = hidden_input_author.value;
-        upload(file, author);
+        const hours = document.querySelector("#hours").value;
+        upload(file, author, hours);
     });
     const user = cookie.getCookie("name");
 
@@ -71,10 +72,11 @@ function init() {
     hidden_input_author.value = user;
 }
 
-function upload(file, author) {
+function upload(file, author, hours) {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("author", author);
+    formData.append("hours", hours);
     fetch("http://localhost:1337/upload", {
         method: "POST",
         body: formData,
