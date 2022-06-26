@@ -11,6 +11,11 @@
 :root {
     font-size: 16px;
 }
+
+.error {
+    color: red;
+}
+
 /* start of header upmake*/
 header {
     color: white;

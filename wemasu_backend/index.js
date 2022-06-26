@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const https = require("https");
 const bcrypt = require("bcryptjs");
+const { ok } = require("assert");
 require("dotenv").config();
 
 // GLOBAL VARIABLES
@@ -76,7 +77,7 @@ app.post("/upload", async (req, res) => {
         // WRITE NEW FILE TO USER IN JSON
         updateUserInJSON(user);
         // UPLOAD FILE TO DATABASE
-        uploadedFile.mv(uploadPath, (err) => (err ? res.status(500).send(err) : res.redirect(req.get("referer") + "home.html")));
+        uploadedFile.mv(uploadPath, (err) => (err ? res.status(500).send(err) : res.status(200).send({ file: newFile })));
         // CATCH AND SEND ERROR MESSAGE
     } catch (e) {
         res.status(500).send({
@@ -171,6 +172,7 @@ app.post("/delete", async (req, res) => {
         fs.unlinkSync(file.uploadPath);
         user.removeFile(file.fileName);
         updateUserInJSON(user);
+        res.status(200).send({ value: `ok` });
         // CATCH AND SEND ERROR MESSAGE
     } catch (e) {
         res.status(500).send({

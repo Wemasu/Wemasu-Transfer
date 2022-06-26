@@ -22,6 +22,7 @@ function getAllUploads() {
     fetch(fetchUrl, { method: "GET" })
         .then((res) => res.json())
         .then((data) => {
+
             if (data.error) {
                 const div = document.querySelector("#error");
                 div.style.display = "block";
@@ -29,6 +30,7 @@ function getAllUploads() {
             } else {
                 displayUploads(data);
             }
+
         });
 }
 
@@ -36,6 +38,7 @@ function displayUploads(uploads) {
     const div = document.querySelector("#uploads-container");
     uploads.reverse();
     uploads.forEach((upload, index) => {
+
         // UPLOAD DATE
         let uploadDate = new Date(upload.uploadDate).toLocaleString();
         // EXPIRATION DATE
@@ -87,6 +90,7 @@ function displayUploads(uploads) {
             }, 2000);
         })
     );
+
     const buttons_delete = document.querySelectorAll(".delete");
     buttons_delete.forEach((button) => {
         button.addEventListener("click", () => {
@@ -104,7 +108,12 @@ function deleteFile(userName, fileName) {
         body: JSON.stringify({ userName: userName, fileName: fileName }),
     })
         .then((res) => {
-            getAllUploads();
+
+            res.json();
         })
-        .catch((error) => console.error(`something went wrong: `, error));
+        .then((data) => {
+            window.location.reload();
+        })
+        .catch((error) => console.error(`Something went wrong: `, error));
+
 }
