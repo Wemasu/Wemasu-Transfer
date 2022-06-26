@@ -46,7 +46,7 @@ app.post("/login", async (req, res) => {
             throw new Error(`Password is incorrect`);
         }
         // SEND SUCCES
-        res.status(200).send({ success: "Login successful.", name: user.name });
+        res.status(200).send(user);
         // CATCH AND SEND ERROR MESSAGE
     } catch (e) {
         res.status(500).send({
@@ -91,9 +91,9 @@ app.post("/upload", async (req, res) => {
 app.get("/download", async (req, res) => {
     try {
         // CHECK IF USER EXISTS AND GET USER
-        const user = getUser(req.query.userName);
+        const user = getHashedUser(req.query.userName);
         // CHECK IF FILE EXISTS AND GET FILE
-        const file = user.getFile(req.query.fileName);
+        const file = user.getHashedFile(req.query.fileName);
         // INITIATE DOWNLOAD
         res.download(file.uploadPath, (err) => {
             if (err) throw new Error(err);
@@ -125,8 +125,8 @@ app.get("/uploads/:user", async (req, res) => {
     }
 });
 
-// RETURN FILE FOR DOWNLOADPAGE
-app.get("/file/:userName/:fileName", async (req, res) => {
+// GET FILE (NON-HASHED URL)
+app.get("/file-nh/:userName/:fileName", async (req, res) => {
     try {
         // CHECK IF USER EXISTS AND GET USER
         const user = getUser(req.params["userName"]);
@@ -143,19 +143,51 @@ app.get("/file/:userName/:fileName", async (req, res) => {
     }
 });
 
+// RETURN FILE FOR DOWNLOAD PAGE (HASHED URL)
+app.get("/file-h/:userName/:fileName", async (req, res) => {
+    try {
+        // CHECK IF USER EXISTS AND GET USER
+        const user = getHashedUser(req.params["userName"]);
+        // CHECK IF FILE EXISTS AND GET FILE
+        const file = user.getHashedFile(req.params["fileName"]);
+        // RETURN FILE
+        res.status(200).send(file);
+        // CATCH AND SEND ERROR MESSAGE
+    } catch (e) {
+        res.status(500).send({
+            error: e.message,
+            value: e.value,
+        });
+    }
+});
+
 // DELETE
 app.post("/delete", async (req, res) => {
     try {
         // CHECK IF USER EXISTS AND GET USER
-        const user = getUser(req.body.userName);
+        const user = getHashedUser(req.body.userName);
         // CHECK IF FILE EXISTS AND GET FILE
-        const file = user.getFile(req.body.fileName);
+        const file = user.getHashedFile(req.body.fileName);
         // DELETE FILE
         fs.unlinkSync(file.uploadPath);
         user.removeFile(file.fileName);
         updateUserInJSON(user);
         res.status(200).send({ value: `ok` });
         // CATCH AND SEND ERROR MESSAGE
+    } catch (e) {
+        res.status(500).send({
+            error: e.message,
+            value: e.value,
+        });
+    }
+});
+
+// Get user
+app.get("/user", async (req, res) => {
+    try {
+        const user = getUser(req.query.name);
+        if (!user) throw new Error("User not found.");
+        res.status(200).send(user);
     } catch (e) {
         res.status(500).send({
             error: e.message,
@@ -180,11 +212,24 @@ function expiredFileChecker() {
     fs.writeFileSync(databasePath, JSON.stringify(users));
 }
 
-// FINDS AND RETURNS USER (user class)
+// FINDS AND RETURNS USER (user class) (non-hased)
 function getUser(name) {
     // GET USERS AND USEROBJECT
     const users = JSON.parse(fs.readFileSync(databasePath));
     const userObject = users.find((user) => user.name.toLowerCase() === name.toLowerCase());
+    // CHECK IF USER EXISTS
+    if (!userObject) {
+        throw new Error(`${name} doesn't exist`);
+    }
+    // INITIATE AND RETURN USER
+    return new User(userObject.name, userObject.passwordHash, userObject.files);
+}
+
+// FINDS AND RETURNS USER (user class) (hashed)
+function getHashedUser(hashedName) {
+    // GET USERS AND USEROBJECT
+    const users = JSON.parse(fs.readFileSync(databasePath));
+    const userObject = users.find((user) => bcrypt.compareSync(user.name, hashedName));
     // CHECK IF USER EXISTS
     if (!userObject) {
         throw new Error(`${name} doesn't exist`);

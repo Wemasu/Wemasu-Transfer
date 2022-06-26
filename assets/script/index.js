@@ -58,6 +58,7 @@ function login(name, passwordHash) {
             name = name[0].toUpperCase() + name.substring(1);
             const lifetime = 60 * 60 * 24 * 1; // SEC * MIN * HRS * DAYS = 60 * 60 * 24 * 1 = 1 DAY
             cookie.setCookie("name", name, { "max-age": lifetime });
+            cookie.setCookie("hashedName", data.hashedName, { "max-age": lifetime });
             window.location = "/home.html";
         });
 }

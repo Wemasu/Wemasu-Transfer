@@ -22,7 +22,15 @@ function getAllUploads() {
     fetch(fetchUrl, { method: "GET" })
         .then((res) => res.json())
         .then((data) => {
-            displayUploads(data);
+
+            if (data.error) {
+                const div = document.querySelector("#error");
+                div.style.display = "block";
+                div.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                displayUploads(data);
+            }
+
         });
 }
 
@@ -30,27 +38,30 @@ function displayUploads(uploads) {
     const div = document.querySelector("#uploads-container");
     uploads.reverse();
     uploads.forEach((upload, index) => {
-        // PREP DATA
-        // FILENAME
-        let fileName = upload.uploadPath;
-        fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-        let userName = upload.author;
 
         // UPLOAD DATE
         let uploadDate = new Date(upload.uploadDate).toLocaleString();
         // EXPIRATION DATE
         let expirationDate = new Date(upload.expirationDate).toLocaleString();
-        // DOWNLOAD LINK
-        const link = encodeURI(`http://127.0.0.1:5500/file.html?userName=${userName}&fileName=${fileName}`);
+
+        // TIME LEFT
         let timeLeft = new Date(upload.expirationDate).getTime() - new Date().getTime();
         timeLeft = timeLeft / 3600000;
         timeLeft = timeLeft.toFixed(2);
+
+        // FILE SIZE
         let size = upload.fileSize > 1000000 ? `${(upload.fileSize / 1000000).toFixed(2)} MB` : `${(upload.fileSize / 1000).toFixed(1)} KB`;
+
+        // Hashed author name
+        const hashedName = cookie.getCookie("hashedName");
+
+        // DOWNLOAD LINK
+        const shareLink = encodeURI(`http://127.0.0.1:5500/file.html?userName=${hashedName}&fileName=${upload.hashedFileName}`);
 
         div.innerHTML += `
             <div id="upload">
               <div id="upload-header">
-                <h2 id="name">Name: ${fileName}</h2>
+                <h2 id="name">Name: ${upload.fileName}</h2>
                 <h2 id="size">Size: ${size}</h2>
                </div> 
               <div id="dates">
@@ -60,17 +71,18 @@ function displayUploads(uploads) {
                 
               </div>
               <div id="buttons">
-                <button id="share" class="share" data-link="${link}">Share</button>
-                <a href="http://localhost:1337/download?userName=${userName}&fileName=${fileName}" id="download">Download</a>
-                <button id="delete" class="delete" data-username="${userName}" data-filename="${fileName}">Delete</button> 
+                <button id="share" class="share" data-link="${shareLink}">Share</button>
+                <a href="http://localhost:1337/download?userName=${hashedName}&fileName=${upload.hashedFileName}" id="download">Download</a>
+                <button id="delete" class="delete" data-username="${hashedName}" data-filename="${upload.hashedFileName}">Delete</button> 
               </div>
             </div>`;
     });
+
+    // EVENTLISTENERS
     const buttons_share = document.querySelectorAll(".share");
     buttons_share.forEach((button) =>
         button.addEventListener("click", () => {
-            console.log("click");
-            http: navigator.clipboard.writeText(`${button.dataset.link}`);
+            navigator.clipboard.writeText(`${button.dataset.link}`);
             //http:localhost:1337/download?file=${button.dataset.filename}
             button.textContent = "Copied to clipboard";
             setTimeout(() => {
@@ -96,10 +108,12 @@ function deleteFile(userName, fileName) {
         body: JSON.stringify({ userName: userName, fileName: fileName }),
     })
         .then((res) => {
+
             res.json();
         })
         .then((data) => {
             window.location.reload();
         })
         .catch((error) => console.error(`Something went wrong: `, error));
+
 }

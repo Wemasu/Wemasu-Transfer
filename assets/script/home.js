@@ -12,10 +12,15 @@ function initCookies() {
     }
     if (cookie.getCookie("uploaded_file")) {
         //https://wemasu.uksouth.cloudapp.azure.com/
-        const author = cookie.getCookie("author");
+        const authorH = cookie.getCookie("author");
+        const authorNH = cookie.getCookie("name");
         const uploadedFile = cookie.getCookie("uploaded_file");
-        const downloadUrl = `http://127.0.0.1:5500/file.html?userName=${author}&fileName=${uploadedFile}`;
-        const downloadUrlEnc = encodeURI(downloadUrl);
+
+        let downloadUrl = "";
+
+        fetch(`http://localhost:1337/file-nh/${authorNH}/${uploadedFile}`)
+            .then((res) => res.json())
+            .then((file) => (downloadUrl = `http://127.0.0.1:5500/file.html?userName=${authorH}&fileName=${file.hashedFileName}`))
 
         // DISPLAY LINK TEXT
         const p = document.createElement("p");
@@ -84,6 +89,15 @@ function upload(file, author) {
 
 function storeUploadedFileInCookie(file, author) {
     const cookie_lifetime = 10; // in seconds
+    // Get user
+    await fetch(`http://localhost:1337/user?name=${author}`, {
+        method: "GET",
+    })
+        .then((res) => res.json())
+        .then((user) => {
+            cookie.setCookie("author", user.hashedName, { "max-age": cookie_lifetime });
+        });
+
 
     cookie.setCookie("uploaded_file", file.name, { "max-age": cookie_lifetime });
     cookie.setCookie("author", author, { "max-age": cookie_lifetime });
