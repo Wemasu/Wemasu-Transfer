@@ -1,4 +1,5 @@
 "use strict";
+import { backend, frontend } from "./serverLink.js";
 import * as cookie from "./cookie.js";
 
 window.onload = async () => {
@@ -18,9 +19,9 @@ async function initCookies() {
 
     let downloadUrl = "";
 
-    await fetch(`https://wemasu.com:1337/file-nh/${authorNH}/${uploadedFile}`)
+    await fetch(`${backend}/file-nh/${authorNH}/${uploadedFile}`)
       .then((res) => res.json())
-      .then((file) => (downloadUrl = `https://wemasu.com/file.html?userName=${authorH}&fileName=${file.hashedFileName}`));
+      .then((file) => (downloadUrl = `${frontend}/file.html?userName=${authorH}&fileName=${file.hashedFileName}`));
 
     const downloadUrlEnc = encodeURI(downloadUrl);
 
@@ -77,7 +78,7 @@ function upload(file, author, hours) {
   formData.append("file", file);
   formData.append("author", author);
   formData.append("hours", hours);
-  fetch("https://wemasu.com:1337/upload", {
+  fetch(`${backend}/upload`, {
     method: "POST",
     body: formData,
   })

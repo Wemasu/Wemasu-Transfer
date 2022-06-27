@@ -245,19 +245,19 @@ function updateUserInJSON(user) {
 }
 
 // LISTEN TO PORT FOR FILE UPLOAD
-// app.listen(port, () => {
-//     console.log(`Listening on port http://localhost:${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Listening on port http://localhost:${port}`);
+});
 
 // HTTPS LISTEN
-https
-  .createServer(
-    {
-      key: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/privkey.pem"),
-      cert: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/cert.pem"),
-    },
-    app
-  )
-  .listen(port, () => {
-    console.log(`Listening HTTPS`);
-  });
+// https
+//   .createServer(
+//     {
+//       key: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/privkey.pem"),
+//       cert: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/cert.pem"),
+//     },
+//     app
+//   )
+//   .listen(port, () => {
+//     console.log(`Listening HTTPS`);
+//   });

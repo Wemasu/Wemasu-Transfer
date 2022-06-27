@@ -1,4 +1,5 @@
 "use strict";
+import { backend } from "./serverLink.js";
 
 window.onload = () => {
   getFile();
@@ -9,7 +10,7 @@ function getFile() {
   // No need to encode compoonents because already encoded @ home.js:~25
   const userName = encodeURIComponent(urlParams.get("userName"));
   const fileName = encodeURIComponent(urlParams.get("fileName"));
-  const fetchUrl = `https://wemasu.com:1337/file-h/${userName}/${fileName}`;
+  const fetchUrl = `${backend}/file-h/${userName}/${fileName}`;
   fetch(fetchUrl, { method: "GET" })
     .then((res) => res.json())
     .then((file) => {
@@ -36,7 +37,7 @@ function displayFile(file) {
     <h2 id="timeLeft">Expires in: ${timeLeft}h</h2>
     <h2 id="size">${size}</h2>
   </div>
-  <a href="https://wemasu.com:1337/download?userName=${userName}&fileName=${fileName}" id="download">Download</a>
+  <a href="${backend}/download?userName=${userName}&fileName=${fileName}" id="download">Download</a>
   
   `;
 }

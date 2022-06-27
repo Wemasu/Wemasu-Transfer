@@ -1,4 +1,5 @@
 "use strict";
+import { backend } from "./serverLink.js";
 import * as cookie from "./cookie.js";
 
 window.onload = () => {
@@ -40,7 +41,7 @@ function validateInput() {
 }
 
 function login(name, passwordHash) {
-  fetch("https://wemasu.com:1337/login", {
+  fetch(`${backend}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

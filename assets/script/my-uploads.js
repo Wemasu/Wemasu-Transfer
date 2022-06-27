@@ -1,4 +1,5 @@
 "use strict";
+import { backend, frontend } from "./serverLink.js";
 import * as cookie from "./cookie.js";
 
 window.onload = () => {
@@ -18,7 +19,7 @@ function init() {
 
 function getAllUploads() {
   const user = cookie.getCookie("name");
-  const fetchUrl = `https://wemasu.com:1337/uploads/${user}`;
+  const fetchUrl = `${backend}/uploads/${user}`;
   fetch(fetchUrl, { method: "GET" })
     .then((res) => res.json())
     .then((data) => {
@@ -53,7 +54,7 @@ function displayUploads(uploads) {
     const hashedName = cookie.getCookie("hashedName");
 
     // DOWNLOAD LINK
-    const shareLink = encodeURI(`https://wemasu.com/file.html?userName=${hashedName}&fileName=${upload.hashedFileName}`);
+    const shareLink = encodeURI(`${frontend}/file.html?userName=${hashedName}&fileName=${upload.hashedFileName}`);
 
     div.innerHTML += `
             <div id="upload">
@@ -69,7 +70,7 @@ function displayUploads(uploads) {
               </div>
               <div id="buttons">
                 <button id="share" class="share" data-link="${shareLink}">Share</button>
-                <a href="https://wemasu.com:1337/download?userName=${hashedName}&fileName=${upload.hashedFileName}" id="download">Download</a>
+                <a href="${backend}/download?userName=${hashedName}&fileName=${upload.hashedFileName}" id="download">Download</a>
                 <button id="delete" class="delete" data-username="${hashedName}" data-filename="${upload.hashedFileName}">Delete</button> 
               </div>
             </div>`;
@@ -99,7 +100,7 @@ function displayUploads(uploads) {
 }
 
 function deleteFile(userName, fileName) {
-  fetch("https://wemasu.com:1337/delete", {
+  fetch(`${backend}/delete`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userName: userName, fileName: fileName }),
