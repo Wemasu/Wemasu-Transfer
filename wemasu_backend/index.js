@@ -112,7 +112,7 @@ app.get("/uploads/:user", async (req, res) => {
     // CHECK IF USER EXISTS AND GET USER
     const user = getUser(req.params["user"]);
     // CHECK IF USER HAS UPLOADS
-    if (user.files.length == 0) throw new Error(`No uploads for ${user.name} found.`);
+    if (user.files.length == 0) throw new Error(`No uploads found for ${user.name}.`);
     // RETURN USER UPLOADS
     res.status(200).send(user.files);
   } catch (e) {
