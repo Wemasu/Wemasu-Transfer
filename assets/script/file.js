@@ -1,5 +1,6 @@
 "use strict";
 import { backend } from "./serverLink.js";
+import { formatter } from "./expiredTimeFormatter.js";
 
 window.onload = () => {
   getFile();
@@ -21,8 +22,8 @@ function getFile() {
 function displayFile(file) {
   const div = document.getElementById("file-container");
   let timeLeft = new Date(file.expirationDate).getTime() - new Date().getTime();
-  timeLeft = timeLeft / 3600000;
-  timeLeft = timeLeft.toFixed(2);
+  timeLeft = formatter(timeLeft);
+
   let size = file.fileSize > 1000000 ? `${(file.fileSize / 1000000).toFixed(2)} MB` : `${(file.fileSize / 1000).toFixed(1)} KB`;
 
   // DOWNLOAD URL BUILD // No need to encode compoonents because already encoded @ home.js:~25
@@ -34,8 +35,8 @@ function displayFile(file) {
   <div id="file">
     <h2 id="fileName">File Name: ${file.fileName}</h2>
     <h2 id="author">Author: ${file.author}</h2>
-    <h2 id="timeLeft">Expires in: ${timeLeft}h</h2>
-    <h2 id="size">${size}</h2>
+    <h2 id="timeLeft">Expires in: ${timeLeft}</h2>
+    <h2 id="size">Size: ${size}</h2>
   </div>
   <a href="${backend}/download?userName=${userName}&fileName=${fileName}" id="download">Download</a>
   

@@ -1,6 +1,7 @@
 "use strict";
 import { backend, frontend } from "./serverLink.js";
 import * as cookie from "./cookie.js";
+import { formatter } from "./expiredTimeFormatter.js";
 
 window.onload = () => {
   init();
@@ -44,8 +45,7 @@ function displayUploads(uploads) {
 
     // TIME LEFT
     let timeLeft = new Date(upload.expirationDate).getTime() - new Date().getTime();
-    timeLeft = timeLeft / 3600000;
-    timeLeft = timeLeft.toFixed(2);
+    timeLeft = formatter(timeLeft);
 
     // FILE SIZE
     let size = upload.fileSize > 1000000 ? `${(upload.fileSize / 1000000).toFixed(2)} MB` : `${(upload.fileSize / 1000).toFixed(1)} KB`;
@@ -64,7 +64,7 @@ function displayUploads(uploads) {
                </div> 
               <div id="dates">
                 <p id="uploadDate">Uploaded: ${uploadDate}</p>
-                <p id="timeLeft">Expires in: ${timeLeft} hours</p>
+                <p id="timeLeft">Expires in: ${timeLeft}</p>
                 <p id="expirationDate">Expires on: ${expirationDate}</p>
                 
               </div>
