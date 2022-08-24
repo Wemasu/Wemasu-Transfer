@@ -1,0 +1,131 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap");
+
+*,
+*::before,
+*::after {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+/* start of header upmake*/
+header {
+  color: white;
+  background-color: blue;
+  width: 100%;
+  font-size: 50px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* end of header upmake*/
+/* start of body upmake*/
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #eee;
+  height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* end of body upmake*/
+/* start of login upmake*/
+.button {
+  color: white;
+  background-color: blue;
+  height: 20%;
+  font-size: 50px;
+}
+
+#login {
+  background-color: white;
+  width: 50%;
+  height: 50%;
+
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 20px;
+}
+
+#login-error {
+  color: red;
+  min-height: 25px;
+  font-size: 20px;
+}
+
+.button:hover {
+  color: blue;
+  background-color: #eee;
+}
+
+input {
+  font-size: 50px;
+  height: 20%;
+  padding-left: 10px;
+}
+
+/* end of login upmake*/
+/*start of footer upmake*/
+.footer {
+  color: white;
+  background-color: blue;
+  height: auto;
+  width: 100%;
+  padding: 25px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+.footer a {
+  color: white;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/*end of footer upmake*/
+/*start of mobile upmake*/
+@media (max-width: 530px), (max-height: 750px) {
+  header {
+    font-size: 20px;
+  }
+
+  body {
+    background-color: white;
+  }
+
+  .button {
+    font-size: 20px;
+    min-height: 30px;
+  }
+
+  input {
+    font-size: 20px;
+    min-height: 30px;
+  }
+
+  #login {
+    width: 100%;
+    gap: 10px;
+  }
+
+  #login-error {
+    text-align: center;
+  }
+
+  .footer {
+    padding: 20px;
+    font-size: 10px;
+  }
+}
+/*end of mobile upmake*/

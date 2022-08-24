@@ -102,8 +102,10 @@ function displayUploads(uploads) {
 // logout button delete cookie
 const logout = document.getElementById("logout");
 logout.addEventListener("click", () => {
-  cookie.deleteCookie("name");
-  window.location.reload();
+  if (window.confirm(`Do you want to logout?`)) {
+    cookie.deleteCookie("name");
+    window.location.reload();
+  }
 });
 
 function deleteFile(userName, fileName) {
