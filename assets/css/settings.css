@@ -1,16 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap");
 
 *,
-*::after,
-*::before {
-  padding: 0;
-  margin: 0;
+*::before,
+*::after {
+  padding: 0px;
+  margin: 0px;
   box-sizing: border-box;
+}
+
+:root {
+  font-size: 16px;
 }
 
 .error {
   color: red;
-  text-align: center;
 }
 
 /* start of header upmake*/
@@ -66,7 +69,6 @@ header button a {
   padding: 0;
   margin: 0;
 }
-
 /* end of header upmake*/
 /* start of body upmake*/
 body {
@@ -82,73 +84,14 @@ body {
 /* end of body upmake*/
 /* start of main upmake*/
 main {
-  margin: 100px;
-  width: 50%;
-  overflow-y: scroll;
-}
-
-/* end of main upmake*/
-/* begin of uploads upmake*/
-#uploads-container {
-  color: blue;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 20px;
 }
-
-#upload {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  background-color: #fff;
-  padding: 20px;
-}
-
-#upload-header {
-  display: flex;
-  justify-content: space-between;
-}
-/* end of uploads upmake*/
-/* begin of dates upmake*/
-#uploads-container > #upload > #dates {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-#uploads-container > #upload > #dates > p {
-  width: 50%;
-}
-/* end of dates upmake*/
-/* begin of buttons upmake*/
-#uploads-container > #upload > #buttons {
-  display: flex;
-  gap: 20px;
-}
-
-#download,
-#share,
-#delete {
-  background-color: blue;
-  color: white;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 10px;
-  border: 0px solid;
-  width: 50%;
-  min-width: 100px;
-  text-align: center;
-  text-decoration: none;
-}
-
-#download:hover,
-#share:hover,
-#delete:hover {
-  background-color: #eee;
-  color: blue;
-}
-/* end of buttons upmake*/
+/* end of main upmake*/
 /*start of footer upmake*/
 .footer {
   color: white;
@@ -171,33 +114,101 @@ main {
 .footer a:hover {
   text-decoration: underline;
 }
-
-/*end of footer upmake*/
 /*start of mobile upmake*/
 @media (max-width: 530px), (max-height: 640px) {
   header {
     font-size: 20px;
   }
+
   #welcome {
     font-size: 20px;
   }
 
   body {
     background-color: white;
+    overflow: hidden;
   }
 
-  main {
+  #flexbox {
+    justify-content: space-between;
+    gap: 50px;
+  }
+
+  form {
+    padding: 0px;
     width: 100%;
-    margin: 0px;
+    padding: 5px;
+  }
+
+  .file {
+    padding: 0px;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .file .button {
+    width: 100%;
+    max-width: none;
+  }
+
+  .file #selected-file {
+    width: 100%;
+    max-width: none;
+    border-right: 1px solid black;
+    text-align: center;
+  }
+
+  #file {
+    padding: 0px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 100%;
+    font-size: 20px;
+  }
+
+  .button {
+    width: 100%;
+    justify-content: center;
+    font-size: 1.5rem;
+    padding: 0px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  #select-hours > label {
+    text-align: center;
+    padding: 0px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  input[type="number"] {
+    padding: 0px;
+    padding-top: 15px;
+    padding-bottom: 15px;
   }
 
   #upload {
-    border-top: 1px solid blue;
+    padding: 0px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+  }
+
+  #latest_uploaded_file {
+    width: 100%;
+    padding: 0px 5px;
+  }
+
+  #latest_uploaded_file > button,
+  #latest_uploaded_file > p {
+    width: 100%;
+    padding: 15px 0px;
   }
 
   .footer {
     padding: 20px;
-    font-size: 10px;
+    font-size: 16px;
   }
 }
 

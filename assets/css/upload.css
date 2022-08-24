@@ -93,6 +93,123 @@ main {
   gap: 20px;
 }
 /* end of main upmake*/
+/* begin of button upmake*/
+
+.button {
+  background-color: blue;
+  color: white;
+  padding: 0px 10px;
+  font-size: 1.5rem;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:hover {
+  background-color: #eee;
+  color: blue;
+}
+/* end of button upmake*/
+/* begin of form upmake*/
+form {
+  background-color: white;
+  padding: 20px;
+  width: 550px;
+}
+
+#flexbox {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#latest_uploaded_file {
+  width: 550px;
+}
+
+#latest_uploaded_file > p {
+  font-size: 1.25rem;
+  text-align: center;
+  padding: 10px;
+}
+
+#latest_uploaded_file > button {
+  width: 100%;
+  background-color: blue;
+  color: white;
+  padding: 10px;
+  font-size: 1.5rem;
+  text-align: center;
+  border: none;
+}
+#latest_uploaded_file > button:hover {
+  background-color: #eee;
+  color: blue;
+  border: none;
+}
+
+#select-hours {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+#select-hours > label {
+  font-size: 1.5rem;
+  text-align: start;
+  padding: 10px;
+}
+
+input,
+.file #selected-file {
+  gap: 20px;
+  font-size: 1.5rem;
+  padding: 10px;
+}
+
+.file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.file #selected-file {
+  width: 75%;
+  max-width: 75%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid black;
+  border-right: none;
+}
+
+.file .button {
+  width: 25%;
+  max-width: 25%;
+  padding: 10px;
+  border: 1px solid blue;
+}
+
+.file .button:hover {
+  border-color: #eee;
+}
+
+.file > input[type="file"] {
+  border: 1px solid black;
+  display: none;
+}
+input[type="number"] {
+  text-align: center;
+  border: 1px solid black;
+}
+
+#upload {
+  border: none;
+  font-size: 1.5rem;
+  padding: 10px;
+}
+
+/* end of form upmake*/
 /*start of footer upmake*/
 .footer {
   color: white;
