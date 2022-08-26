@@ -39,7 +39,7 @@ expiredFileChecker();
 // ENABLE HOURLY CHECK
 setInterval(() => {
   expiredFileChecker();
-}, 3600000); // 3600000 => 1hr
+}, 30000); // 3600000 => 1hr
 
 // LOGIN
 app.post("/login", async (req, res) => {
@@ -66,7 +66,6 @@ app.post("/login", async (req, res) => {
 // UPLOAD
 app.post("/upload", async (req, res) => {
   try {
-    console.log(`in de backend fetch`);
     // VALIDATION => CHECK IF EMPTY REQUEST => IF SO ABORT
     if (!req.files || Object.keys(req.files).length === 0) {
       throw new Error(`No upload file selected`);
