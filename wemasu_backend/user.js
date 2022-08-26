@@ -34,6 +34,10 @@ class User {
     this.#files = files;
   }
 
+  set passwordHash(passwordHash) {
+    this.#passwordHash = passwordHash;
+  }
+
   addFile(file) {
     this.#files.forEach((f) => {
       if (file.uploadPath === f.uploadPath) throw new Error("File already exists");

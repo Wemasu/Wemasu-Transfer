@@ -249,13 +249,7 @@ function getHashedUser(hashedName) {
 // Register user
 app.post("/register", async (req, res) => {
   try {
-    console.log(__dirname);
-    console.log(`inside`);
     // CHECK IF CREDENTIALS ARE MISSING
-    console.log(req.body.name);
-    console.log(req.body.passwordHash);
-    console.log(req.body.registerCode);
-    console.log(process.env.USER_SALT);
     if (!req.body.name || !req.body.passwordHash || !req.body.registerCode) throw new Error("Missing credentials.");
     // CHECK IF REGISTER CODE IS CORRECT
     const rCode = `Devving`;
@@ -297,6 +291,29 @@ function addUserInJSON(user) {
   users.push(user);
   fs.writeFileSync(databasePath, JSON.stringify(users));
 }
+
+// CHANGE PASSWORD
+app.post("/changePassword", async (req, res) => {
+  try {
+    // CHECK IF CREDENTIALS ARE MISSING
+    if (!req.body.oldPassword || !req.body.newPassword || !req.body.repeatPassword) throw new Error("Missing input.");
+    // CHECK IF OLD PASSWORD IS CORRECT
+    const user = getUser(req.body.user);
+    if (!bcrypt.compareSync(req.body.oldPassword, user.passwordHash)) {
+      throw new Error(`Old password is incorrect`);
+    }
+    // change user password and update in json file
+    user.passwordHash = bcrypt.hashSync(req.body.newPassword);
+    updateUserInJSON(user);
+    // SEND SUCCES
+    res.status(200).send(`succesfully changed password`);
+  } catch (e) {
+    res.status(500).send({
+      error: e.message,
+      value: e.value,
+    });
+  }
+});
 
 // LISTEN TO PORT FOR FILE UPLOAD
 app.listen(port, () => {
