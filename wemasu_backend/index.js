@@ -112,7 +112,7 @@ app.get("/uploads/:user", async (req, res) => {
     // CHECK IF USER EXISTS AND GET USER
     const user = getUser(req.params["user"]);
     // CHECK IF USER HAS UPLOADS
-    if (user.files.length == 0) throw new Error(`No uploads found for ${user.name}.`);
+    if (user.files.length == 0) throw new Error(`No uploads found for ${user.name[0].toUpperCase() + user.name.substring(1)}.`);
     // RETURN USER UPLOADS
     res.status(200).send(user.files);
   } catch (e) {
@@ -211,7 +211,7 @@ function expiredFileChecker() {
   fs.writeFileSync(databasePath, JSON.stringify(users));
 }
 
-// FINDS AND RETURNS USER (user class) (non-hased)
+// FINDS AND RETURNS USER (user class) (non-hashed)
 function getUser(name) {
   // GET USERS AND USEROBJECT
   const users = JSON.parse(fs.readFileSync(databasePath));
@@ -222,6 +222,15 @@ function getUser(name) {
   }
   // INITIATE AND RETURN USER
   return new User(userObject.name, userObject.passwordHash, userObject.files);
+}
+
+// CHECKS IF USER EXISTS ALREADY
+function checkUser(name) {
+  const users = JSON.parse(fs.readFileSync(databasePath));
+  const userObject = users.find((user) => user.name.toLowerCase() === name.toLowerCase());
+  if (userObject) {
+    throw new Error(`${name} already exists`);
+  }
 }
 
 // FINDS AND RETURNS USER (user class) (hashed)
@@ -237,10 +246,55 @@ function getHashedUser(hashedName) {
   return new User(userObject.name, userObject.passwordHash, userObject.files);
 }
 
+// Register user
+app.post("/register", async (req, res) => {
+  try {
+    console.log(__dirname);
+    console.log(`inside`);
+    // CHECK IF CREDENTIALS ARE MISSING
+    console.log(req.body.name);
+    console.log(req.body.passwordHash);
+    console.log(req.body.registerCode);
+    console.log(process.env.USER_SALT);
+    if (!req.body.name || !req.body.passwordHash || !req.body.registerCode) throw new Error("Missing credentials.");
+    // CHECK IF REGISTER CODE IS CORRECT
+    const rCode = `Devving`;
+    const registerCode = req.body.registerCode;
+    if (rCode !== registerCode) throw new Error(`Wrong register code`);
+    // CHECK IF USER ALREADY EXISTS
+    checkUser(req.body.name);
+    // CREATE NEW USER AND HASH PASSWORD
+    const newUser = new User(req.body.name, bcrypt.hashSync(req.body.passwordHash, parseInt(process.env.PASSWORD_SALT)));
+    // CREATE USER DIRECTORY
+    fs.mkdir(`${__dirname}/uploads/${newUser.name}`, (error) => {
+      if (error) {
+        throw new Error(error);
+      }
+    });
+    // ADD USER TO JSON
+    addUserInJSON(newUser);
+    // SEND SUCCES
+    res.status(200).send(`${newUser.name} succesfully registered`);
+  } catch (e) {
+    res.status(500).send({
+      error: e.message,
+      value: e.value,
+    });
+  }
+});
+
+// UPDATE USERS IN JSON DATABASE
 function updateUserInJSON(user) {
   const users = JSON.parse(fs.readFileSync(databasePath));
   const index = users.findIndex((u) => u.name === user.name);
   users.splice(index, 1, user);
+  fs.writeFileSync(databasePath, JSON.stringify(users));
+}
+
+// ADD USER IN JSON DATABASE
+function addUserInJSON(user) {
+  const users = JSON.parse(fs.readFileSync(databasePath));
+  users.push(user);
   fs.writeFileSync(databasePath, JSON.stringify(users));
 }
 

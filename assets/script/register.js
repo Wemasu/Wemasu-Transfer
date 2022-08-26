@@ -13,7 +13,7 @@ function init() {
     e.preventDefault();
     let credentials = await validateInput();
     if (credentials != undefined) {
-      register(credentials[0], credentials[1]);
+      register(credentials[0], credentials[1], credentials[2]);
     }
   });
 }
@@ -23,10 +23,10 @@ function validateInput() {
   const inputs = document.getElementsByClassName("input");
   const field_name = document.querySelector("#name").value;
   const field_password = document.querySelector("#password").value;
-  const field_repeat_password = document.getElementById("repeatpassword").value;
+  const registerCode = document.getElementById("registerCode").value;
   const dom_error = document.querySelector("#login-error-text");
 
-  if (!field_name || !field_password || !field_repeat_password) {
+  if (!field_name || !field_password || !registerCode) {
     let htmlInputsMissing = "";
     for (let input of inputs) {
       if (!input.value) {
@@ -35,22 +35,19 @@ function validateInput() {
     }
     dom_error.innerHTML = `Make sure you have filled in the following:  ${htmlInputsMissing.slice(0, htmlInputsMissing.length - 2)}`;
     return;
-  } else if (field_password !== field_repeat_password) {
-    dom_error.innerHTML = `Make sure your password matches`;
-    return;
   } else {
     dom_error.innerHTML = "";
   }
-  return [field_name, field_password];
+  return [field_name, field_password, registerCode];
 }
 
-function register(name, password) {
+function register(name, passwordHash, registerCode) {
   fetch(`${backend}/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ name: name.toLowerCase(), password }),
+    body: JSON.stringify({ name: name.toLowerCase(), passwordHash, registerCode }),
   })
     .then((res) => res.json())
     .then((data) => {
