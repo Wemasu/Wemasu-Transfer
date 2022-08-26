@@ -19,7 +19,15 @@ const port = process.env.PORT;
 app.use(cors());
 app.use(express.static("public"));
 app.use(bodyParser.json());
-app.use(fileUpload());
+// app.use(fileUpload());
+
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: `${__dirname}/tmp/`,
+    // debug: true,
+  })
+);
 
 app.get("/", (req, res) => {
   res.status(300).redirect("/docs.html");
@@ -58,6 +66,7 @@ app.post("/login", async (req, res) => {
 // UPLOAD
 app.post("/upload", async (req, res) => {
   try {
+    console.log(`in de backend fetch`);
     // VALIDATION => CHECK IF EMPTY REQUEST => IF SO ABORT
     if (!req.files || Object.keys(req.files).length === 0) {
       throw new Error(`No upload file selected`);

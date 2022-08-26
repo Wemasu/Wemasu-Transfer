@@ -63,10 +63,11 @@ function init() {
   btn_upload.addEventListener("click", (e) => {
     e.preventDefault();
     const file = file_upload.files[0];
-    if (file.size > 300000000) {
-      document.querySelector("#error").innerHTML = `<p class="error">File size is too large! Max 300MB</p>`;
-      return;
-    }
+    // FRONTEND LIMIT FOR FILE SIZE , NOT NEEDED ANYMORE BECAUSE OF TEMP location upload
+    // if (file.size > 300000000) {
+    //   document.querySelector("#error").innerHTML = `<p class="error">File size is too large! Max 300MB</p>`;
+    //   return;
+    // }
     const author = hidden_input_author.value;
     const hours = document.querySelector("#hours").value;
     upload(file, author, hours);
