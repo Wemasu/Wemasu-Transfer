@@ -296,7 +296,7 @@ function addUserInJSON(user) {
 app.post("/changePassword", async (req, res) => {
   try {
     // CHECK IF CREDENTIALS ARE MISSING
-    if (!req.body.oldPassword || !req.body.newPassword || !req.body.repeatPassword) throw new Error("Missing input.");
+    if (!req.body.oldPassword || !req.body.newPassword || !req.body.repeatPassword || !req.body.user) throw new Error("Missing input.");
     // CHECK IF OLD PASSWORD IS CORRECT
     const user = getUser(req.body.user);
     if (!bcrypt.compareSync(req.body.oldPassword, user.passwordHash)) {
@@ -307,6 +307,42 @@ app.post("/changePassword", async (req, res) => {
     updateUserInJSON(user);
     // SEND SUCCES
     res.status(200).send(`succesfully changed password`);
+  } catch (e) {
+    res.status(500).send({
+      error: e.message,
+      value: e.value,
+    });
+  }
+});
+
+// DELETE ACCOUNT
+app.post("/deleteAccount", async (req, res) => {
+  try {
+    // CHECK IF CREDENTIALS ARE MISSING
+    if (!req.body.password || !req.body.user) throw new Error("Missing input.");
+    // CHECK IF PASSWORD IS CORRECT
+    const user = getUser(req.body.user);
+    if (!bcrypt.compareSync(req.body.password, user.passwordHash)) {
+      throw new Error(`incorrect password`);
+    }
+    // DELETE EACH FILE FROM ACCOUNT
+    user.files.forEach((file) => {
+      fs.unlinkSync(file.uploadPath);
+    });
+
+    // DELETE USER DIRECTORY
+    fs.rmdir(`${__dirname}/uploads/${user.name}`, (error) => {
+      if (error) {
+        throw new Error(error);
+      }
+    });
+    // REMOVE USER FROM JSON
+    const users = JSON.parse(fs.readFileSync(databasePath));
+    const index = users.findIndex((u) => u.name === user.name);
+    users.splice(index, 1);
+    fs.writeFileSync(databasePath, JSON.stringify(users));
+    // SEND SUCCES
+    res.status(200).send(`${user.name} succesfully deleted`);
   } catch (e) {
     res.status(500).send({
       error: e.message,
