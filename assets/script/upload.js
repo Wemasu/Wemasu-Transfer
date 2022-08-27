@@ -22,6 +22,7 @@ function init() {
 
   file_upload.addEventListener("change", (e) => {
     document.querySelector("#latest_uploaded_file").innerHTML = "";
+    document.querySelector("#error").innerHTML = "";
     e.preventDefault();
     const file = file_upload.files[0];
     const textFileSelected = (document.querySelector("#selected-file").textContent = file.name);
