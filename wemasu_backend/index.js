@@ -25,7 +25,8 @@ app.use(
   fileUpload({
     useTempFiles: true,
     tempFileDir: `${__dirname}/tmp/`,
-    // debug: true,
+    debug: true,
+    uploadTimeout: 5000,
   })
 );
 
@@ -39,6 +40,20 @@ expiredFileChecker();
 // ENABLE HOURLY CHECK
 setInterval(() => {
   expiredFileChecker();
+  fs.readdir(`${__dirname}/tmp/`, (err, files) => {
+    if (err) console.error(err);
+    else {
+      files.forEach((file) => {
+        fs.stat(`${__dirname}/tmp/${file}`, (err, stats) => {
+          if (err) console.error(err);
+          else if (new Date() - stats.birthtime > 900000) {
+            fs.unlinkSync(`${__dirname}/tmp/${file}`);
+            console.log(`${file} Deleted on ${new Date()} it was ${Math.floor((new Date() - stats.birthtime) / 60000)} Minutes old`);
+          }
+        });
+      });
+    }
+  });
 }, 30000); // 3600000 => 1hr
 
 // LOGIN
