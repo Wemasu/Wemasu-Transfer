@@ -53,9 +53,16 @@ body {
 }
 
 #login-error {
-  color: red;
   min-height: 25px;
   font-size: 20px;
+}
+
+#login-error-text {
+  color: red;
+}
+
+#succes {
+  color: blue;
 }
 
 .button:hover {

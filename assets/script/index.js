@@ -16,6 +16,7 @@ function init() {
       login(credentials[0], credentials[1]);
     }
   });
+  initiateEnterEventListener();
 }
 
 function validateInput() {
@@ -62,4 +63,15 @@ function login(name, passwordHash) {
       cookie.setCookie("hashedName", data.hashedName, { "max-age": lifetime });
       window.location = "/home.html";
     });
+}
+
+function initiateEnterEventListener() {
+  const submit = document.getElementById("submit");
+  window.addEventListener("keyup", (e) => {
+    e.preventDefault();
+
+    if (e.key === `Enter`) {
+      submit.click();
+    }
+  });
 }

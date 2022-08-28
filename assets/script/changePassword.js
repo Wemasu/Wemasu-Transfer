@@ -14,6 +14,8 @@ function init() {
   const welcome = document.querySelector("#welcome");
   const user = cookie.getCookie("name");
   welcome.textContent = user;
+
+  initiateEnterEventListener();
 }
 
 // logout button delete cookie
@@ -41,6 +43,9 @@ function validateInput() {
   const newPassword = document.querySelector("#newPassword").value;
   const repeatPassword = document.querySelector("#repeatPassword").value;
   const dom_error = document.querySelector("#login-error-text");
+  const succes = document.querySelector("#succes");
+  dom_error.innerHTML = "";
+  succes.innerHTML = "";
 
   if (!oldPassword || !newPassword || !repeatPassword) {
     let htmlInputsMissing = "";
@@ -61,21 +66,58 @@ function validateInput() {
 }
 
 function changePassword(oldPassword, newPassword, repeatPassword, user) {
-  fetch(`${backend}/changePassword`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ oldPassword, newPassword, repeatPassword, user }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      const dom_error = document.querySelector(`#login-error-text`);
-      if (data.error) {
-        const dom_error = document.querySelector(`#login-error-text`);
-        dom_error.innerHTML = data.error;
-        return;
-      }
-      dom_error.innerHTML = data;
-    });
+  const formData = new FormData();
+
+  formData.append("oldPassword", oldPassword);
+  formData.append("newPassword", newPassword);
+  formData.append("repeatPassword", repeatPassword);
+  formData.append("user", user);
+
+  const req = new XMLHttpRequest();
+  req.open(`POST`, `${backend}/changePassword`);
+
+  req.addEventListener(`load`, () => {
+    if (req.status === 200) {
+      const succes = document.querySelector("#succes");
+      succes.innerHTML = `<p>${req.response}</p>`;
+    }
+    if (req.status === 500) {
+      const error = document.querySelector("#login-error-text");
+      const response = JSON.parse(req.response);
+      error.innerHTML = `${response.error}`;
+    }
+  });
+
+  req.send(formData);
+}
+
+// function changePassword(oldPassword, newPassword, repeatPassword, user) {
+//   fetch(`${backend}/changePassword`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({ oldPassword, newPassword, repeatPassword, user }),
+//   })
+//     .then((res) => res.json())
+//     .then((data) => {
+//       const dom_error = document.querySelector(`#login-error-text`);
+//       if (data.error) {
+//         const dom_error = document.querySelector(`#login-error-text`);
+//         dom_error.innerHTML = data.error;
+//         return;
+//       }
+//       dom_error.innerHTML = data;
+//     });
+// }
+
+function initiateEnterEventListener() {
+  const submit = document.getElementById("submit");
+  window.addEventListener("keyup", (e) => {
+    e.preventDefault();
+
+    if (e.key === `Enter`) {
+      submit.click();
+    }
+  });
 }

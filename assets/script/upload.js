@@ -44,6 +44,8 @@ function init() {
 
   welcome.innerHTML = `${user}`;
   hidden_input_author.value = user;
+
+  initiateEnterEventListener();
 }
 
 function upload(file, author, hours) {
@@ -63,9 +65,11 @@ function upload(file, author, hours) {
   });
 
   req.addEventListener(`load`, () => {
-    const test = JSON.parse(req.response);
+    const response = JSON.parse(req.response);
     if (req.status === 500) {
-      error.innerHTML = `<p class="error">${test.error}</p>`;
+      const div = document.querySelector("#latest_uploaded_file");
+      div.innerHTML = ``;
+      error.innerHTML = `<p class="error">${response.error}</p>`;
     }
     if (req.status === 200) {
       const file = JSON.parse(req.response).file;
@@ -106,3 +110,14 @@ logout.addEventListener("click", () => {
     window.location.reload();
   }
 });
+
+function initiateEnterEventListener() {
+  const submit = document.getElementById("upload");
+  window.addEventListener("keyup", (e) => {
+    e.preventDefault();
+
+    if (e.key === `Enter`) {
+      submit.click();
+    }
+  });
+}

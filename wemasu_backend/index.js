@@ -291,7 +291,7 @@ app.post("/register", async (req, res) => {
     // ADD USER TO JSON
     addUserInJSON(newUser);
     // SEND SUCCES
-    res.status(200).send(`${newUser.name} succesfully registered`);
+    res.status(200).send(`Succesfully registered ${newUser.name}!`);
   } catch (e) {
     res.status(500).send({
       error: e.message,
@@ -329,7 +329,7 @@ app.post("/changePassword", async (req, res) => {
     user.passwordHash = bcrypt.hashSync(req.body.newPassword);
     updateUserInJSON(user);
     // SEND SUCCES
-    res.status(200).send(`succesfully changed password`);
+    res.status(200).send(`succesfully changed password!`);
   } catch (e) {
     res.status(500).send({
       error: e.message,
@@ -365,7 +365,7 @@ app.post("/deleteAccount", async (req, res) => {
     users.splice(index, 1);
     fs.writeFileSync(databasePath, JSON.stringify(users));
     // SEND SUCCES
-    res.status(200).send(`${user.name} succesfully deleted`);
+    res.status(200).send(`Account has been deleted!`);
   } catch (e) {
     res.status(500).send({
       error: e.message,
