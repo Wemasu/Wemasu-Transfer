@@ -283,7 +283,7 @@ app.post("/register", async (req, res) => {
     // CREATE NEW USER AND HASH PASSWORD
     const newUser = new User(req.body.name, bcrypt.hashSync(req.body.passwordHash, parseInt(process.env.PASSWORD_SALT)));
     // CREATE USER DIRECTORY
-    fs.mkdir(`${__dirname}/uploads/${newUser.name}`, (error) => {
+    fs.mkdir(`${__dirname}/uploads/${newUser.name.toLowerCase()}`, (error) => {
       if (error) {
         throw new Error(error);
       }
@@ -354,7 +354,7 @@ app.post("/deleteAccount", async (req, res) => {
     });
 
     // DELETE USER DIRECTORY
-    fs.rmdir(`${__dirname}/uploads/${user.name}`, (error) => {
+    fs.rmdir(`${__dirname}/uploads/${user.name.toLowerCase()}`, (error) => {
       if (error) {
         throw new Error(error);
       }
