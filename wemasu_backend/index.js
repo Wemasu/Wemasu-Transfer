@@ -25,8 +25,8 @@ app.use(
   fileUpload({
     useTempFiles: true,
     tempFileDir: `${__dirname}/tmp/`,
-    debug: true,
-    uploadTimeout: 5000,
+    debug: false,
+    uploadTimeout: 60000,
   })
 );
 
