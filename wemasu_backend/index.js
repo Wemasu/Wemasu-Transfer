@@ -147,6 +147,26 @@ app.get("/uploads/:user", async (req, res) => {
   }
 });
 
+// RETURN USER FILES FILENAMES
+app.get("/files/:user", async (req, res) => {
+  try {
+    // CHECK IF USER EXISTS AND GET USER
+    const user = getUser(req.params["user"]);
+    // RETURN USER UPLOADS
+    const filenames = [];
+    user.files.forEach((file) => {
+      filenames.push(file.fileName);
+    });
+    res.status(200).send(filenames);
+  } catch (e) {
+    // CATCH AND SEND ERROR MESSAGE
+    res.status(500).send({
+      error: e.message,
+      value: e.value,
+    });
+  }
+});
+
 // GET FILE (NON-HASHED URL)
 app.get("/file-nh/:userName/:fileName", async (req, res) => {
   try {
