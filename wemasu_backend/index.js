@@ -374,6 +374,32 @@ app.post("/deleteAccount", async (req, res) => {
   }
 });
 
+// FREE SPACE CALC
+// 20 GB space allocated for files -> 20 000 000 000
+function calcFreeSpaceLeft() {
+  const users = JSON.parse(fs.readFileSync(databasePath));
+  let bytes = 20000000000;
+  users.forEach((user) => {
+    user.files.forEach((file) => {
+      bytes -= file.fileSize;
+    });
+  });
+
+  return bytes;
+}
+
+// Get user
+app.get("/getBytesLeft", async (req, res) => {
+  try {
+    res.status(200).send({ bytes: calcFreeSpaceLeft() });
+  } catch (e) {
+    res.status(500).send({
+      error: e.message,
+      value: e.value,
+    });
+  }
+});
+
 // LISTEN TO PORT FOR FILE UPLOAD
 app.listen(port, () => {
   console.log(`Listening on port http://localhost:${port}`);

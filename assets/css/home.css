@@ -92,6 +92,24 @@ main {
   justify-content: center;
   gap: 20px;
 }
+
+#freeSpaceFlexBox {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 5px;
+}
+
+#freeSpace {
+  width: 50%;
+  background-color: white;
+}
+
+#freeSpaceBar {
+  width: 50%;
+  height: 30px;
+  background-color: blue;
+}
 /* end of main upmake*/
 /*start of footer upmake*/
 .footer {
