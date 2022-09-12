@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const https = require("https");
 const bcrypt = require("bcryptjs");
+const { trace } = require("console");
 require("dotenv").config();
 
 // GLOBAL VARIABLES
@@ -118,14 +119,20 @@ app.get("/download", async (req, res) => {
     const file = user.getHashedFile(req.query.fileName);
     // INITIATE DOWNLOAD
     res.download(file.uploadPath, (err) => {
-      if (err) throw new Error(err);
+      if (err) {
+        console.error(`\n`);
+        trace(`${new Date()}, User: ${user.name}, Error: ${err.message} ${err.name}`);
+        console.error(err);
+      }
     });
+
     // CATCH AND SEND ERROR MESSAGE
-  } catch (e) {
-    res.status(500).send({
-      error: e.message,
-      value: e.value,
-    });
+  } catch (err) {
+    console.error(`\n`);
+    trace(`${new Date()}, Error: ${err.message} ${err.name}`);
+    console.error(err);
+
+    res.status(500).send(`Sorry something went wrong! Try again or contact Weas`);
   }
 });
 
