@@ -193,13 +193,13 @@ async function getFreeSpace() {
 // VALIDATE FILE
 async function validate(file, author, hours) {
   // CHECK FOR HOURS
-  if (hours > 168) {
-    showError(`Expiration time is too long! Max: 168 Hours(1 week)!`);
+  if (hours > 2190) {
+    showError(`Expiration time is too long! Max: 2190 Hours(3 Months)!`);
     return false;
   }
   // FRONTEND LIMIT FOR FILE SIZE
-  if (file.size > 1073741824) {
-    showError(`File is too large! 1GB max!`);
+  if (file.size > 5368709120) {
+    showError(`File is too large! 5GB max!`);
     return false;
   }
   const files = await getUserFileNames(author);

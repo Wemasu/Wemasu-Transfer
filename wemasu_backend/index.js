@@ -17,7 +17,7 @@ const databasePath = __dirname + "/database.json";
 const port = process.env.PORT;
 
 // MIDDELWARE
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.static("public"));
 app.use(bodyParser.json());
 // app.use(fileUpload());
@@ -93,8 +93,8 @@ app.post("/upload", async (req, res) => {
     const uploadPath = `${__dirname}/uploads/${user.name.toLowerCase()}/${uploadedFile.name}`;
     const newFile = new File(new Date(), req.body.hours, req.body.author, uploadPath, uploadedFile.name, uploadedFile.size);
     // CHECK IF FILE SIZE TO LARGE
-    const MAX_FILE_SIZE = Math.pow(10, 9); // 1,000,000,000 BYTES => 1000 MB => 1 GB
-    if (uploadedFile.size > MAX_FILE_SIZE) throw new Error(`File is too large. Max file size is ${MAX_FILE_SIZE}`);
+    const MAX_FILE_SIZE = 5368709120; // 1,000,000,000 BYTES => 1000 MB => 1 GB
+    if (uploadedFile.size > MAX_FILE_SIZE) throw new Error(`File is too large. Max file size is ${MAX_FILE_SIZE} Bytes`);
     // CHECK IF FILE ALREADY EXISTS AND ADD TO USER
     user.addFile(newFile);
     // UPLOAD FILE TO DATABASE
@@ -428,19 +428,19 @@ app.get("/getBytesLeft", async (req, res) => {
 });
 
 // LISTEN TO PORT FOR FILE UPLOAD
-app.listen(port, () => {
-  console.log(`Listening on port http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Listening on port http://localhost:${port}`);
+// });
 
 // HTTPS LISTEN
-// https
-//   .createServer(
-//     {
-//       key: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/privkey.pem"),
-//       cert: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/cert.pem"),
-//     },
-//     app
-//   )
-//   .listen(port, () => {
-//     console.log(`Listening HTTPS`);
-//   });
+https
+  .createServer(
+    {
+      key: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/privkey.pem"),
+      cert: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/cert.pem"),
+    },
+    app
+  )
+  .listen(port, () => {
+    console.log(`Listening HTTPS`);
+  });
