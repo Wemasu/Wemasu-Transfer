@@ -47,7 +47,7 @@ async function upload(file, author, hours) {
       if (req.status === 200) {
         const file = JSON.parse(req.response).file;
         const authorH = cookie.getCookie("hashedName");
-        const downloadUrl = encodeURI(`${frontend}/file.html?userName=${authorH}&fileName=${file.hashedFileName}`);
+        const downloadUrl = encodeURI(`${frontend}/html/file.html?userName=${authorH}&fileName=${file.hashedFileName}f`);
         showUpload(downloadUrl);
       }
     });

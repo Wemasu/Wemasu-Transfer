@@ -54,7 +54,7 @@ function displayUploads(uploads) {
     const hashedName = cookie.getCookie("hashedName");
 
     // DOWNLOAD LINK
-    const shareLink = encodeURI(`${frontend}/file.html?userName=${hashedName}&fileName=${upload.hashedFileName}`);
+    const shareLink = encodeURI(`${frontend}/html/file.html?userName=${hashedName}&fileName=${upload.hashedFileName}`);
 
     div.innerHTML += `
             <div id="upload">
@@ -69,8 +69,8 @@ function displayUploads(uploads) {
                 
               </div>
               <div id="buttons">
-                <button id="share" class="share" data-link="${shareLink}">Share</button>
-                <a href="${backend}/download?userName=${hashedName}&fileName=${upload.hashedFileName}" id="download">Download</a>
+                <button id="share" class="share" data-link="${shareLink + "f"}">Share</button>
+                <a href="${backend}/download?userName=${hashedName}&fileName=${upload.hashedFileName + "f"}" id="download">Download</a>
                 <button id="delete" class="delete" data-username="${hashedName}" data-filename="${upload.hashedFileName}">Delete</button> 
               </div>
             </div>`;

@@ -120,7 +120,12 @@ app.get("/download", async (req, res) => {
     // CHECK IF USER EXISTS AND GET USER
     const user = getHashedUser(req.query.userName);
     // CHECK IF FILE EXISTS AND GET FILE
-    const file = user.getHashedFile(req.query.fileName);
+    let hashedFileName = req.query.fileName;
+    hashedFileName = hashedFileName.split("");
+    hashedFileName.pop();
+    hashedFileName = hashedFileName.join("");
+
+    const file = user.getHashedFile(hashedFileName);
     // INITIATE DOWNLOAD
     res.download(file.uploadPath, (err) => {
       if (err) {
@@ -202,7 +207,11 @@ app.get("/file-h/:userName/:fileName", async (req, res) => {
     // CHECK IF USER EXISTS AND GET USER
     const user = getHashedUser(req.params["userName"]);
     // CHECK IF FILE EXISTS AND GET FILE
-    const file = user.getHashedFile(req.params["fileName"]);
+    let hashedFileName = req.params["fileName"];
+    hashedFileName = hashedFileName.split("");
+    hashedFileName.pop();
+    hashedFileName = hashedFileName.join("");
+    const file = user.getHashedFile(hashedFileName);
     // RETURN FILE
     res.status(200).send(file);
     // CATCH AND SEND ERROR MESSAGE
