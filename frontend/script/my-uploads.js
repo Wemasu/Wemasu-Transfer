@@ -10,7 +10,7 @@ window.onload = () => {
 
 function init() {
   if (!cookie.getCookie("name")) {
-    window.location = "../index.html";
+    window.location = "../html/index.html";
   }
   // DOM ELEMENTS
   const welcome = document.querySelector("#welcome");

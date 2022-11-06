@@ -13,10 +13,14 @@ const { trace } = require("console");
 require("dotenv").config();
 
 // GLOBAL VARIABLES
-const databasePath = __dirname + "/database.json";
+let pathBackend = __dirname;
+pathBackend = pathBackend.split("\\");
+pathBackend.pop();
+pathBackend = pathBackend.join("\\");
+const databasePath = `${pathBackend}/json_data/database.json`;
 const port = process.env.PORT;
 
-// MIDDELWARE
+// MIDDLEWARE
 app.use(cors({ origin: "*" }));
 app.use(express.static("public"));
 app.use(bodyParser.json());
@@ -25,7 +29,7 @@ app.use(bodyParser.json());
 app.use(
   fileUpload({
     useTempFiles: true,
-    tempFileDir: `${__dirname}/tmp/`,
+    tempFileDir: `${pathBackend}/tmp/`,
     debug: false,
     uploadTimeout: 60000,
   })
@@ -41,14 +45,14 @@ expiredFileChecker();
 // ENABLE HOURLY CHECK
 setInterval(() => {
   expiredFileChecker();
-  fs.readdir(`${__dirname}/tmp/`, (err, files) => {
+  fs.readdir(`${pathBackend}/tmp/`, (err, files) => {
     if (err) console.error(err);
     else {
       files.forEach((file) => {
-        fs.stat(`${__dirname}/tmp/${file}`, (err, stats) => {
+        fs.stat(`${pathBackend}/tmp/${file}`, (err, stats) => {
           if (err) console.error(err);
           else if (new Date() - stats.birthtime > 900000) {
-            fs.unlinkSync(`${__dirname}/tmp/${file}`);
+            fs.unlinkSync(`${pathBackend}/tmp/${file}`);
             console.log(`${file} Deleted on ${new Date()} it was ${Math.floor((new Date() - stats.birthtime) / 60000)} Minutes old`);
           }
         });
@@ -90,7 +94,7 @@ app.post("/upload", async (req, res) => {
     const user = getUser(req.body.author);
     // CREATE FILE
     const uploadedFile = req.files.file;
-    const uploadPath = `${__dirname}/uploads/${user.name.toLowerCase()}/${uploadedFile.name}`;
+    const uploadPath = `${pathBackend}/uploads/${user.name.toLowerCase()}/${uploadedFile.name}`;
     const newFile = new File(new Date(), req.body.hours, req.body.author, uploadPath, uploadedFile.name, uploadedFile.size);
     // CHECK IF FILE SIZE TO LARGE
     const MAX_FILE_SIZE = 5368709120; // 1,000,000,000 BYTES => 1000 MB => 1 GB
@@ -310,7 +314,7 @@ app.post("/register", async (req, res) => {
     // CREATE NEW USER AND HASH PASSWORD
     const newUser = new User(req.body.name, bcrypt.hashSync(req.body.passwordHash, parseInt(process.env.PASSWORD_SALT)));
     // CREATE USER DIRECTORY
-    fs.mkdir(`${__dirname}/uploads/${newUser.name.toLowerCase()}`, (error) => {
+    fs.mkdir(`${pathBackend}/uploads/${newUser.name.toLowerCase()}`, (error) => {
       if (error) {
         throw new Error(error);
       }
@@ -381,7 +385,7 @@ app.post("/deleteAccount", async (req, res) => {
     });
 
     // DELETE USER DIRECTORY
-    fs.rmdir(`${__dirname}/uploads/${user.name.toLowerCase()}`, (error) => {
+    fs.rmdir(`${pathBackend}/uploads/${user.name.toLowerCase()}`, (error) => {
       if (error) {
         throw new Error(error);
       }
@@ -428,19 +432,19 @@ app.get("/getBytesLeft", async (req, res) => {
 });
 
 // LISTEN TO PORT FOR FILE UPLOAD
-// app.listen(port, () => {
-//   console.log(`Listening on port http://localhost:${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Listening on port http://localhost:${port}`);
+});
 
 // HTTPS LISTEN
-https
-  .createServer(
-    {
-      key: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/privkey.pem"),
-      cert: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/cert.pem"),
-    },
-    app
-  )
-  .listen(port, () => {
-    console.log(`Listening HTTPS`);
-  });
+// https
+//   .createServer(
+//     {
+//       key: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/privkey.pem"),
+//       cert: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/cert.pem"),
+//     },
+//     app
+//   )
+//   .listen(port, () => {
+//     console.log(`Listening HTTPS`);
+//   });

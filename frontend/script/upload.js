@@ -9,7 +9,7 @@ window.onload = async () => {
 
 async function initCookies() {
   if (!cookie.getCookie("name")) {
-    window.location = "../index.html";
+    window.location = "../html/index.html";
   }
 }
 
