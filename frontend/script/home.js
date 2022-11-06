@@ -8,7 +8,7 @@ window.onload = () => {
 
 function init() {
   if (!cookie.getCookie("name")) {
-    window.location = "../html/index.html";
+    window.location = "./index.html";
   }
   // DOM ELEMENTS
   const welcome = document.querySelector("#welcome");

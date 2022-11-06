@@ -10,7 +10,7 @@ window.onload = () => {
 
 function init() {
   if (!cookie.getCookie("name")) {
-    window.location = "../html/index.html";
+    window.location = "./index.html";
   }
   // DOM ELEMENTS
   const welcome = document.querySelector("#welcome");
@@ -54,7 +54,7 @@ function displayUploads(uploads) {
     const hashedName = cookie.getCookie("hashedName");
 
     // DOWNLOAD LINK
-    const shareLink = encodeURI(`${frontend}/html/file.html?userName=${hashedName}&fileName=${upload.hashedFileName}`);
+    const shareLink = encodeURI(`${frontend}/file.html?userName=${hashedName}&fileName=${upload.hashedFileName}`);
 
     div.innerHTML += `
             <div id="upload">
