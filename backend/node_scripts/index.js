@@ -14,9 +14,9 @@ require("dotenv").config();
 
 // GLOBAL VARIABLES
 let pathBackend = __dirname;
-pathBackend = pathBackend.split("\\");
+pathBackend = pathBackend.split("/");
 pathBackend.pop();
-pathBackend = pathBackend.join("\\");
+pathBackend = pathBackend.join("/");
 const databasePath = `${pathBackend}/json_data/database.json`;
 const port = process.env.PORT;
 
@@ -441,19 +441,19 @@ app.get("/getBytesLeft", async (req, res) => {
 });
 
 // LISTEN TO PORT FOR FILE UPLOAD
-app.listen(port, () => {
-  console.log(`Listening on port http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Listening on port http://localhost:${port}`);
+// });
 
 // HTTPS LISTEN
-// https
-//   .createServer(
-//     {
-//       key: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/privkey.pem"),
-//       cert: fs.readFileSync("/etc/letsencrypt/live/wemasu.com-0001/cert.pem"),
-//     },
-//     app
-//   )
-//   .listen(port, () => {
-//     console.log(`Listening HTTPS`);
-//   });
+https
+  .createServer(
+    {
+      key: fs.readFileSync("/etc/letsencrypt/live/pieter-deconinck.com/privkey.pem"),
+      cert: fs.readFileSync("/etc/letsencrypt/live/pieter-deconinck.com/cert.pem"),
+    },
+    app
+  )
+  .listen(port, () => {
+    console.log(`Listening HTTPS`);
+  });
