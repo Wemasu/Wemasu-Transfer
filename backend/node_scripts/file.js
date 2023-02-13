@@ -10,6 +10,7 @@ class File {
   #fileName;
   #fileSize;
   #hashedFileName;
+  #downloads;
 
   constructor(uploadDate, hours = 24, author, uploadPath, fileName, fileSize) {
     this.#uploadDate = uploadDate;
@@ -20,6 +21,7 @@ class File {
     this.fileName = fileName;
     this.#fileSize = fileSize;
     this.#hashedFileName = bcrypt.hashSync(this.#fileName, parseInt(process.env.FILE_SALT));
+    this.#downloads = 0;
   }
 
   get uploadDate() {
@@ -53,10 +55,18 @@ class File {
   get hashedFileName() {
     return this.#hashedFileName;
   }
+  
+  get downloads(){
+    return this.#downloads;
+  }
 
   set fileName(name) {
     if (name[0] === `.`) throw new Error(`File name can't start with a dot: ${name}`);
     this.#fileName = name;
+  }
+
+  set downloads(downloads){
+    this.#downloads=downloads;
   }
 
   toJSON() {
@@ -69,6 +79,7 @@ class File {
       fileName: this.#fileName,
       fileSize: this.#fileSize,
       hashedFileName: this.#hashedFileName,
+      downloads: this.#downloads,
     };
   }
 }
