@@ -1,3 +1,4 @@
-*.env
+
 node_modules
-*.json
+package-lock.json
+frontend/.vscode/settings.json

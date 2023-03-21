@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Starting Webserver"
-sudo node index.js >> stdout.txt 2> stderr.txt &
+sudo node index.js >> /var/www/WeMaSu/backend/log/stdout.txt 2> /var/www/WeMaSu/backend/log/stderr.txt &
 
 
 process=$(ps -A | grep node)
